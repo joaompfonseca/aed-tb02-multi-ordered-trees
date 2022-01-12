@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include "AED_2021_A02.h"
 
-
 //
 // Private stuff (hence the static before variable and function declarations)
 //
@@ -25,10 +24,9 @@ typedef struct
 {
   char part[60]; // the name part (beware that the array must also have space for the string terminator)
   int count;     // number of occurrences (after initialization, the cumulative sum of the number of occurrences)
-}
-name_part_t;
+} name_part_t;
 
-#define N_MALE_NAMES  ((int)(sizeof(male_names) / sizeof(male_names[0])) - 1)
+#define N_MALE_NAMES ((int)(sizeof(male_names) / sizeof(male_names[0])) - 1)
 static name_part_t male_names[] =
 {
   {       "Aaron", 350151 },{       "Abdul",  10213 },{         "Abe",   8754 },{       "Abel",  27720 },{     "Abraham",  51064 },
@@ -1850,10 +1848,10 @@ static name_part_t zip_codes[] =
   {                                               "---",     0 }
 };
 
-static void correct_counts(int array_size,name_part_t array[array_size + 1])
+static void correct_counts(int array_size, name_part_t array[array_size + 1])
 { // Correct the count field, so that it becomes the cumulative sum of all previous entries
   int total = 0;
-  for(int i = 0;i <= array_size;i++)
+  for (int i = 0; i <= array_size; i++)
   {
     int next_total = total + array[i].count;
     array[i].count = total; // cummulative sum of PREVIOUS entries
@@ -1861,20 +1859,20 @@ static void correct_counts(int array_size,name_part_t array[array_size + 1])
   }
 }
 
-static char *random_part(int array_size,name_part_t array[array_size + 1])
+static char *random_part(int array_size, name_part_t array[array_size + 1])
 {
   long long rnd = ((long long)aed_random() << 30) + (long long)aed_random(); // a large pseudo-random number
-  int target_count = (int)(rnd % (long long)array[array_size].count); // the cumulative count we will be looking for
+  int target_count = (int)(rnd % (long long)array[array_size].count);        // the cumulative count we will be looking for
   // custom binary search
   int low = 0;
   int high = array_size; // recall we have an extra entry at the end
-  while(high - low >= 2)
+  while (high - low >= 2)
   {
     // loop invariants:
     //   array[low].count <= target_count
     //   array[high].count > target_count
     int middle = (low + high) / 2; // note that because high - low >= 2, middle can never be equal to either low or high
-    if(array[middle].count <= target_count)
+    if (array[middle].count <= target_count)
       low = middle;
     else
       high = middle;
@@ -1884,16 +1882,15 @@ static char *random_part(int array_size,name_part_t array[array_size + 1])
 
 static void correct_all(void)
 { // correct the count fields (done only once)
-  if(male_names[N_MALE_NAMES].count == 0)
-    correct_counts(N_MALE_NAMES,male_names);
-  if(female_names[N_FEMALE_NAMES].count == 0)
-    correct_counts(N_FEMALE_NAMES,female_names);
-  if(family_names[N_FAMILY_NAMES].count == 0)
-    correct_counts(N_FAMILY_NAMES,family_names);
-  if(zip_codes[N_ZIP_CODES].count == 0)
-    correct_counts(N_ZIP_CODES,zip_codes);
+  if (male_names[N_MALE_NAMES].count == 0)
+    correct_counts(N_MALE_NAMES, male_names);
+  if (female_names[N_FEMALE_NAMES].count == 0)
+    correct_counts(N_FEMALE_NAMES, female_names);
+  if (family_names[N_FAMILY_NAMES].count == 0)
+    correct_counts(N_FAMILY_NAMES, family_names);
+  if (zip_codes[N_ZIP_CODES].count == 0)
+    correct_counts(N_ZIP_CODES, zip_codes);
 }
-
 
 //
 // Public stuff
@@ -1902,11 +1899,11 @@ static void correct_all(void)
 void random_name(char name[MAX_NAME_SIZE + 1])
 {
   correct_all();
-  char *first_name = ((aed_random() & 0x100) == 0) ? random_part(N_MALE_NAMES,male_names) : random_part(N_FEMALE_NAMES,female_names);
-  char *family_name = random_part(N_FAMILY_NAMES,family_names);
-  if(snprintf(name,MAX_NAME_SIZE + 1,"%s %s",first_name,family_name) >= MAX_NAME_SIZE + 1)
+  char *first_name = ((aed_random() & 0x100) == 0) ? random_part(N_MALE_NAMES, male_names) : random_part(N_FEMALE_NAMES, female_names);
+  char *family_name = random_part(N_FAMILY_NAMES, family_names);
+  if (snprintf(name, MAX_NAME_SIZE + 1, "%s %s", first_name, family_name) >= MAX_NAME_SIZE + 1)
   {
-    fprintf(stderr,"name too large (%s) (%s)\n",first_name,family_name);
+    fprintf(stderr, "name too large (%s) (%s)\n", first_name, family_name);
     exit(1);
   }
 }
@@ -1914,10 +1911,10 @@ void random_name(char name[MAX_NAME_SIZE + 1])
 void random_zip_code(char zip_code[MAX_ZIP_CODE_SIZE + 1])
 {
   correct_all();
-  char *code = random_part(N_ZIP_CODES,zip_codes);
-  if(snprintf(zip_code,MAX_ZIP_CODE_SIZE + 1,"%s",code) >= MAX_ZIP_CODE_SIZE + 1)
+  char *code = random_part(N_ZIP_CODES, zip_codes);
+  if (snprintf(zip_code, MAX_ZIP_CODE_SIZE + 1, "%s", code) >= MAX_ZIP_CODE_SIZE + 1)
   {
-    fprintf(stderr,"zip code too large (%s)\n",code);
+    fprintf(stderr, "zip code too large (%s)\n", code);
     exit(1);
   }
 }
@@ -1927,9 +1924,21 @@ void random_telephone_number(char telephone_number[MAX_TELEPHONE_NUMBER_SIZE + 1
   int n1 = 1000 + aed_random() % 9000; // 1000..9999
   int n2 = aed_random() % 1000;        //  000..999
   int n3 = aed_random() % 1000;        //  000..999
-  if(snprintf(telephone_number,MAX_TELEPHONE_NUMBER_SIZE + 1,"%04d %03d %03d",n1,n2,n3) >= MAX_TELEPHONE_NUMBER_SIZE + 1)
+  if (snprintf(telephone_number, MAX_TELEPHONE_NUMBER_SIZE + 1, "%04d %03d %03d", n1, n2, n3) >= MAX_TELEPHONE_NUMBER_SIZE + 1)
   {
-    fprintf(stderr,"telephone number too large (%04d) (%03d (%03d)\n",n1,n2,n3);
+    fprintf(stderr, "telephone number too large (%04d) (%03d) (%03d)\n", n1, n2, n3);
+    exit(1);
+  }
+}
+
+void random_social_security_number(char social_security_number[MAX_SOCIAL_SECURITY_NUMBER_SIZE + 1]) // adicionado
+{
+  int n1 = 1 + aed_random() % 999;  //  001..999
+  int n2 = 1 + aed_random() % 99;   //   01..99
+  int n3 = 1 + aed_random() % 9999; // 0001..9999
+  if (snprintf(social_security_number, MAX_SOCIAL_SECURITY_NUMBER_SIZE + 1, "%03d-%02d-%04d", n1, n2, n3) >= MAX_SOCIAL_SECURITY_NUMBER_SIZE + 1)
+  {
+    fprintf(stderr, "social security number too large (%04d) (%03d) (%03d)\n", n1, n2, n3);
     exit(1);
   }
 }

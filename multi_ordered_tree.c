@@ -16,19 +16,21 @@
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
-/*
- * the custom tree node structure
- *
- * we want to maintain three ordered trees (using the same nodes!), so we need three left and three right pointers
- * so, when inserting a new node we need to do it three times (one for each index), so we will end upo with 3 three roots
+
+/**
+ * @brief Estrutura do nó personalizada da árvore
+ * 
+ * Queremos manter três árvores ordenadas (utilizando os mesmos nós!), logo necessitamos de três ponteiros para a esquerda e três ponteiros para a direita.
+ * Ao inserir um novo nó, fazê-mo-lo três vezes (uma vez por cada índice), precisando assim de três raízes.
  */
 typedef struct tree_node_s
 {
-    char name[MAX_NAME_SIZE + 1];                         // index 0 data item
-    char zip_code[MAX_ZIP_CODE_SIZE + 1];                 // index 1 data item
-    char telephone_number[MAX_TELEPHONE_NUMBER_SIZE + 1]; // index 2 data item
-    struct tree_node_s *left[3];                          // left pointers (one for each index) ---- left means smaller
-    struct tree_node_s *right[3];                         // right pointers (one for each index) --- right means larger
+    char name[MAX_NAME_SIZE + 1];                                     // índice 0
+    char zip_code[MAX_ZIP_CODE_SIZE + 1];                             // índice 1
+    char telephone_number[MAX_TELEPHONE_NUMBER_SIZE + 1];             // índice 2
+    char social_security_number[MAX_SOCIAL_SECURITY_NUMBER_SIZE + 1]; // índice 3
+    struct tree_node_s *left[N_DATA_TYPES];                           // ponteiros para a esquerda (um para cada índice) - esquerda significa menor
+    struct tree_node_s *right[N_DATA_TYPES];                          // ponteiros para a direita (um para cada índice) - direita significa maior
 } tree_node_t;
 
 /* ------------------------------------------ Funções ------------------------------------------- */
@@ -36,30 +38,48 @@ typedef struct tree_node_s
 /**
  * @brief Compara dois nós da árvore.
  *
- * @param node1     Nó 1
- * @param node2     Nó 2
- * @param main_idx  Índice do tipo de dados a comparar
+ * @param node1     Ponteiro para o nó 1
+ * @param node2     Ponteiro para o nó 2
+ * @param type      Árvore considerada
  * @return          Resultado da comparação
  */
-int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_idx)
+int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int type)
 {
     int i, c;
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < N_DATA_TYPES; i++)
     {
-        if (main_idx == 0)
+        switch (type)
+        {
+        case 0:
             c = strcmp(node1->name, node2->name);
-        else if (main_idx == 1)
+            break;
+        case 1:
             c = strcmp(node1->zip_code, node2->zip_code);
-        else
+            break;
+        case 2:
             c = strcmp(node1->telephone_number, node2->telephone_number);
+            break;
+        case 3:
+            c = strcmp(node1->social_security_number, node2->social_security_number);
+            break;
+        }
+
         if (c != 0)
-            return c;                                  // different on this index, so return
-        main_idx = (main_idx == 2) ? 0 : main_idx + 1; // advance to the next index
+            return c;                                   // nós diferem nesta árvore
+        type = (type == N_DATA_TYPES - 1) ? 0 : type++; // próxima árvore
     }
     return 0;
 }
 
+/**
+ * @brief Filtra o nó da árvore.
+ *
+ * @param node      Ponteiro para o nó
+ * @param type      Árvore considerada
+ * @param filter    Filtro
+ * @return          Resultado da filtragem
+ */
 int filter_tree_node(tree_node_t *node, int type, char *filter)
 {
     char *data;
@@ -75,6 +95,8 @@ int filter_tree_node(tree_node_t *node, int type, char *filter)
     case 2:
         data = node->telephone_number;
         break;
+    case 3:
+        data = node->social_security_number;
     default:
         data = "";
         break;
@@ -83,14 +105,20 @@ int filter_tree_node(tree_node_t *node, int type, char *filter)
     return (strcasestr(data, filter)) ? 1 : 0;
 }
 
+/**
+ * @brief Imprime os dados do nó.
+ *
+ * @param node      Ponteiro para o nó
+ * @param count     Número de nós listados
+ */
 void visit(tree_node_t *node, int *count)
 {
     printf("Person #%d\n", ++(*count));
-    printf("name ............... %s\n", node->name);
-    printf("zip code ........... %s\n", node->zip_code);
-    printf("telephone number ... %s\n", node->telephone_number);
+    printf("name ..................... %s\n", node->name);
+    printf("zip code ................. %s\n", node->zip_code);
+    printf("telephone number ......... %s\n", node->telephone_number);
+    printf("social security number ... %s\n", node->social_security_number);
 }
-
 /**
  * @brief Insere nó na árvore, de uma forma recursiva.
  *
@@ -128,7 +156,7 @@ tree_node_t *find(tree_node_t *link, int type, tree_node_t *node)
 
 /**
  * @brief Determina a maior profundidade da árvore, de uma forma recursiva.
- * 
+ *
  * @param link      Ponteiro para o nó atual
  * @param type      Árvore considerada
  * @return          Valor da maior profundidade da árvore
@@ -144,6 +172,14 @@ int tree_depth(tree_node_t *link, int type)
     return (left_depth > right_depth) ? left_depth + 1 : right_depth + 1;
 }
 
+/**
+ * @brief Lista dados dos nós da árvore que passam no filtro especificado, de uma forma recursiva.
+ *
+ * @param link      Ponteiro para o nó atual
+ * @param type      Árvore considerada
+ * @param count     Número de nós listados
+ * @param filter    Filtro
+ */
 void list(tree_node_t *link, int type, int *count, char *filter)
 {
     if (link == NULL)
@@ -203,7 +239,8 @@ int main(int argc, char **argv)
         random_name(&(persons[i].name[0]));
         random_zip_code(&(persons[i].zip_code[0]));
         random_telephone_number(&(persons[i].telephone_number[0]));
-        for (int j = 0; j < 3; j++)
+        random_social_security_number(&(persons[i].social_security_number[0]));
+        for (int j = 0; j < N_DATA_TYPES; j++)
             persons[i].left[j] = persons[i].right[j] = NULL; // garantir que os ponteiros são NULL inicialmente
     }
 
@@ -212,11 +249,11 @@ int main(int argc, char **argv)
      */
     dt = cpu_time();
 
-    tree_node_t *roots[3]; // três índices, três raízes
-    for (int main_index = 0; main_index < 3; main_index++)
+    tree_node_t *roots[N_DATA_TYPES]; // N índices, N raízes
+    for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
         roots[main_index] = NULL;
     for (int i = 0; i < n_persons; i++)
-        for (int main_index = 0; main_index < 3; main_index++)
+        for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
             tree_insert(&(roots[main_index]), main_index, &(persons[i])); // place your code here to insert &(persons[i]) in the tree with number main_index
 
     dt = cpu_time() - dt;
@@ -225,7 +262,7 @@ int main(int argc, char **argv)
     /*
      * procurar nó na árvore
      */
-    for (int main_index = 0; main_index < 3; main_index++)
+    for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
     {
         dt = cpu_time();
 
@@ -246,7 +283,7 @@ int main(int argc, char **argv)
     /*
      * determinar a maior profundidade da árvore
      */
-    for (int main_index = 0; main_index < 3; main_index++)
+    for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
     {
         dt = cpu_time();
 
@@ -269,7 +306,7 @@ int main(int argc, char **argv)
             if (main_index > 2)
                 main_index = 2;
 
-            char *filter = (argc == i+1 || argv[i+1][0] == '-') ? "" : argv[++i];
+            char *filter = (argc == i + 1 || argv[i + 1][0] == '-') ? "" : argv[++i];
 
             printf("List of persons:\n");
             int count = 0;
