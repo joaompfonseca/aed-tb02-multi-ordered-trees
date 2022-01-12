@@ -8,6 +8,7 @@
  * 103865 - Jorge Silva
  */
 
+#define _GNU_SOURCE // para ter a função strcasestr na função filter_tree_node
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,9 +60,32 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_idx)
     return 0;
 }
 
+int filter_tree_node(tree_node_t *node, int type, char *filter)
+{
+    char *data;
+
+    switch (type)
+    {
+    case 0:
+        data = node->name;
+        break;
+    case 1:
+        data = node->zip_code;
+        break;
+    case 2:
+        data = node->telephone_number;
+        break;
+    default:
+        data = "";
+        break;
+    }
+
+    return (strcasestr(data, filter)) ? 1 : 0;
+}
+
 void visit(tree_node_t *node, int *count)
 {
-    printf("Person #%d\n", ++(*count)); 
+    printf("Person #%d\n", ++(*count));
     printf("name ............... %s\n", node->name);
     printf("zip code ........... %s\n", node->zip_code);
     printf("telephone number ... %s\n", node->telephone_number);
@@ -120,15 +144,15 @@ int tree_depth(tree_node_t *link, int type)
     return (left_depth > right_depth) ? left_depth + 1 : right_depth + 1;
 }
 
-
-void list(tree_node_t *link, int type, int *count)
+void list(tree_node_t *link, int type, int *count, char *filter)
 {
     if (link == NULL)
         return;
 
-    list(link->left[type], type, count);
-    visit(link, count);
-    list(link->right[type], type, count);
+    list(link->left[type], type, count, filter);
+    if (filter_tree_node(link, type, filter))
+        visit(link, count);
+    list(link->right[type], type, count, filter);
 }
 
 /* -------------------------------- Fluxo de Execução Principal --------------------------------- */
@@ -144,7 +168,7 @@ int main(int argc, char **argv)
     {
         fprintf(stderr, "Usage: %s student_number number_of_persons [options ...]\n", argv[0]);
         fprintf(stderr, "Recognized options:\n");
-        fprintf(stderr, "  -list[N]              # list the tree contents, sorted by key index N (the default is index 0)\n");
+        fprintf(stderr, "  -list[N] [filter]             # list the tree contents, sorted by key index N (the default is index 0)\n");
         // place a description of your own options here
         return 1;
     }
@@ -245,11 +269,12 @@ int main(int argc, char **argv)
             if (main_index > 2)
                 main_index = 2;
 
+            char *filter = (argc == i+1 || argv[i+1][0] == '-') ? "" : argv[++i];
+
             printf("List of persons:\n");
             int count = 0;
-            list(roots[main_index], main_index, &count); // place your code here to traverse, in order, the tree with number main_index
+            list(roots[main_index], main_index, &count, filter); // place your code here to traverse, in order, the tree with number main_index
         }
-        // place your own options here
     }
 
     /*
