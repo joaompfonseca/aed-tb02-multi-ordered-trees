@@ -16,10 +16,9 @@
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
-
 /**
  * @brief Estrutura do nó personalizada da árvore
- * 
+ *
  * Queremos manter três árvores ordenadas (utilizando os mesmos nós!), logo necessitamos de três ponteiros para a esquerda e três ponteiros para a direita.
  * Ao inserir um novo nó, fazê-mo-lo três vezes (uma vez por cada índice), precisando assim de três raízes.
  */
@@ -66,8 +65,8 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int type)
         }
 
         if (c != 0)
-            return c;                                   // nós diferem nesta árvore
-        type = (type == N_DATA_TYPES - 1) ? 0 : type++; // próxima árvore
+            return c;                                     // nós diferem nesta árvore
+        type = (type == N_DATA_TYPES - 1) ? 0 : type + 1; // próxima árvore
     }
     return 0;
 }
