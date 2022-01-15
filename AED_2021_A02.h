@@ -9,11 +9,11 @@
 // protect against multiple inclusions of this file
 #define AED_2021_A02
 
-#define N_DATA_TYPES                     4 // adicionado
+#define N_MAIN_INDEXES                  4 // adicionado
 #define MAX_NAME_SIZE                   31
 #define MAX_ZIP_CODE_SIZE               63
-#define MAX_TELEPHONE_NUMBER_SIZE       15
-#define MAX_SOCIAL_SECURITY_NUMBER_SIZE 11 // adicionado
+#define MAX_TELEPHONE_NUMBER_SIZE       13
+#define MAX_SOCIAL_SECURITY_NUMBER_SIZE 12 // adicionado
 
 // from random_number.c
 void aed_srandom(int seed);

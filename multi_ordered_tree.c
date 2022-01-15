@@ -12,15 +12,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
+#include <regex.h>
 #include "AED_2021_A02.h"
+
+/* ------------------------------------------- Macros ------------------------------------------- */
+
+/**
+ * @brief Utilização correta do programa
+ */
+#define USAGE "Sintaxe: %s n_estudante n_pessoas [opções ...]\n"                                                                                         \
+              "Opções válidas:\n"                                                                                                                       \
+              "    -l [N], --list [N]              # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n" \
+              "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n"
+
+/**
+ * @brief Flags da expressão regular (do filtro)
+ */
+#define REGEX_FLAGS (REG_EXTENDED | REG_NOSUB)
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
 /**
- * @brief Estrutura do nó personalizada da árvore
+ * @brief Opções disponíveis no programa.
+ */
+static struct option long_options[] = {
+    {"filter", required_argument, NULL, 'f'},
+    {"list", required_argument, NULL, 'l'},
+    {NULL, 0, NULL, 0}};
+
+/**
+ * @brief Estrutura do nó personalizado da árvore
  *
- * Queremos manter três árvores ordenadas (utilizando os mesmos nós!), logo necessitamos de três ponteiros para a esquerda e três ponteiros para a direita.
- * Ao inserir um novo nó, fazê-mo-lo três vezes (uma vez por cada índice), precisando assim de três raízes.
+ * Queremos manter N_MAIN_INDEXES árvores ordenadas (utilizando os mesmos nós!), logo necessitamos de N_MAIN_INDEXES ponteiros para a esquerda e N_MAIN_INDEXES ponteiros para a direita.
+ * Ao inserir um novo nó, fazê-mo-lo N_MAIN_INDEXES vezes (uma vez por cada índice), precisando assim de N_MAIN_INDEXES raízes.
  */
 typedef struct tree_node_s
 {
@@ -28,8 +53,8 @@ typedef struct tree_node_s
     char zip_code[MAX_ZIP_CODE_SIZE + 1];                             // índice 1
     char telephone_number[MAX_TELEPHONE_NUMBER_SIZE + 1];             // índice 2
     char social_security_number[MAX_SOCIAL_SECURITY_NUMBER_SIZE + 1]; // índice 3
-    struct tree_node_s *left[N_DATA_TYPES];                           // ponteiros para a esquerda (um para cada índice) - esquerda significa menor
-    struct tree_node_s *right[N_DATA_TYPES];                          // ponteiros para a direita (um para cada índice) - direita significa maior
+    struct tree_node_s *left[N_MAIN_INDEXES];                         // ponteiros para a esquerda (um para cada índice) - esquerda significa menor
+    struct tree_node_s *right[N_MAIN_INDEXES];                        // ponteiros para a direita (um para cada índice) - direita significa maior
 } tree_node_t;
 
 /* ------------------------------------------ Funções ------------------------------------------- */
@@ -37,18 +62,18 @@ typedef struct tree_node_s
 /**
  * @brief Compara dois nós da árvore.
  *
- * @param node1     Ponteiro para o nó 1
- * @param node2     Ponteiro para o nó 2
- * @param type      Árvore considerada
- * @return          Resultado da comparação
+ * @param node1      Ponteiro para o nó 1
+ * @param node2      Ponteiro para o nó 2
+ * @param main_index Índice da árvore
+ * @return           Resultado da comparação
  */
-int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int type)
+int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
 {
     int i, c;
 
-    for (i = 0; i < N_DATA_TYPES; i++)
+    for (i = 0; i < N_MAIN_INDEXES; i++)
     {
-        switch (type)
+        switch (main_index)
         {
         case 0:
             c = strcmp(node1->name, node2->name);
@@ -65,8 +90,8 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int type)
         }
 
         if (c != 0)
-            return c;                                     // nós diferem nesta árvore
-        type = (type == N_DATA_TYPES - 1) ? 0 : type + 1; // próxima árvore
+            return c;                                                         // nós diferem nesta árvore
+        main_index = (main_index == N_MAIN_INDEXES - 1) ? 0 : main_index + 1; // próxima árvore
     }
     return 0;
 }
@@ -74,16 +99,16 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int type)
 /**
  * @brief Filtra o nó da árvore.
  *
- * @param node      Ponteiro para o nó
- * @param type      Árvore considerada
- * @param filter    Filtro
- * @return          Resultado da filtragem
+ * @param node       Ponteiro para o nó
+ * @param main_index Índice da árvore
+ * @param filter     Ponteiro para o filtro
+ * @return           Resultado da filtragem
  */
-int filter_tree_node(tree_node_t *node, int type, char *filter)
+int filter_tree_node(tree_node_t *node, int main_index, regex_t *filter)
 {
-    char *data;
+    char *data = NULL;
 
-    switch (type)
+    switch (main_index)
     {
     case 0:
         data = node->name;
@@ -96,19 +121,17 @@ int filter_tree_node(tree_node_t *node, int type, char *filter)
         break;
     case 3:
         data = node->social_security_number;
-    default:
-        data = "";
         break;
     }
 
-    return (strcasestr(data, filter)) ? 1 : 0;
+    return (regexec(filter, data, 0, NULL, 0)) ? 0 : 1;
 }
 
 /**
  * @brief Imprime os dados do nó.
  *
- * @param node      Ponteiro para o nó
- * @param count     Número de nós listados
+ * @param node  Ponteiro para o nó
+ * @param count Ponteiro para o número de nós listados
  */
 void visit(tree_node_t *node, int *count)
 {
@@ -118,55 +141,56 @@ void visit(tree_node_t *node, int *count)
     printf("telephone number ......... %s\n", node->telephone_number);
     printf("social security number ... %s\n", node->social_security_number);
 }
+
 /**
  * @brief Insere nó na árvore, de uma forma recursiva.
  *
- * @param link      Ponteiro para o ponteiro que aponta para o nó atual
- * @param type      Árvore considerada
- * @param node      Ponteiro para o nó a inserir
+ * @param link       Ponteiro para o ponteiro que aponta para o nó atual
+ * @param main_index Índice da árvore
+ * @param node       Ponteiro para o nó a inserir
  */
-void tree_insert(tree_node_t **link, int type, tree_node_t *node)
+void tree_insert(tree_node_t **link, int main_index, tree_node_t *node)
 {
     if (*link == NULL)
         *link = node;
-    else if (compare_tree_nodes(node, *link, type) <= 0)
-        tree_insert(&((*link)->left[type]), type, node); // ramo esquerdo
+    else if (compare_tree_nodes(node, *link, main_index) <= 0)
+        tree_insert(&((*link)->left[main_index]), main_index, node); // ramo esquerdo
     else
-        tree_insert(&((*link)->right[type]), type, node); // ramo direito
+        tree_insert(&((*link)->right[main_index]), main_index, node); // ramo direito
 }
 
 /**
  * @brief Procura nó na árvore, de uma forma recursiva.
  *
- * @param link      Ponteiro para o nó atual
- * @param type      Árvore considerada
- * @param node      Ponteiro para o nó a procurar
- * @return          Ponteiro para o nó encontrado na árvore, NULL caso contrário
+ * @param link       Ponteiro para o nó atual
+ * @param main_index Índice da árvore
+ * @param node       Ponteiro para o nó a procurar
+ * @return           Ponteiro para o nó encontrado na árvore, NULL caso contrário
  */
-tree_node_t *find(tree_node_t *link, int type, tree_node_t *node)
+tree_node_t *find(tree_node_t *link, int main_index, tree_node_t *node)
 {
-    if (link == NULL || compare_tree_nodes(node, link, type) == 0)
+    if (link == NULL || compare_tree_nodes(node, link, main_index) == 0)
         return link;
-    else if (compare_tree_nodes(node, link, type) < 0)
-        return find(link->left[type], type, node); // ramo esquerdo
+    else if (compare_tree_nodes(node, link, main_index) < 0)
+        return find(link->left[main_index], main_index, node); // ramo esquerdo
     else
-        return find(link->right[type], type, node); // ramo direito
+        return find(link->right[main_index], main_index, node); // ramo direito
 }
 
 /**
  * @brief Determina a maior profundidade da árvore, de uma forma recursiva.
  *
- * @param link      Ponteiro para o nó atual
- * @param type      Árvore considerada
- * @return          Valor da maior profundidade da árvore
+ * @param link       Ponteiro para o nó atual
+ * @param main_index Índice da árvore
+ * @return           Valor da maior profundidade da árvore
  */
-int tree_depth(tree_node_t *link, int type)
+int tree_depth(tree_node_t *link, int main_index)
 {
     if (link == NULL)
         return 0;
 
-    int left_depth = tree_depth(link->left[type], type);   // ramo esquerdo
-    int right_depth = tree_depth(link->right[type], type); // ramo direito
+    int left_depth = tree_depth(link->left[main_index], main_index);   // ramo esquerdo
+    int right_depth = tree_depth(link->right[main_index], main_index); // ramo direito
 
     return (left_depth > right_depth) ? left_depth + 1 : right_depth + 1;
 }
@@ -174,52 +198,84 @@ int tree_depth(tree_node_t *link, int type)
 /**
  * @brief Lista dados dos nós da árvore que passam no filtro especificado, de uma forma recursiva.
  *
- * @param link      Ponteiro para o nó atual
- * @param type      Árvore considerada
- * @param count     Número de nós listados
- * @param filter    Filtro
+ * @param link       Ponteiro para o nó atual
+ * @param main_index Índice da árvore
+ * @param count      Ponteiro para o número de nós listados
+ * @param filter     Ponteiro para o filtro
  */
-void list(tree_node_t *link, int type, int *count, char *filter)
+void list(tree_node_t *link, int main_index, int *count, regex_t *filter)
 {
     if (link == NULL)
         return;
 
-    list(link->left[type], type, count, filter);
-    if (filter_tree_node(link, type, filter))
+    list(link->left[main_index], main_index, count, filter);
+    if (filter_tree_node(link, main_index, filter))
         visit(link, count);
-    list(link->right[type], type, count, filter);
+    list(link->right[main_index], main_index, count, filter);
 }
 
 /* -------------------------------- Fluxo de Execução Principal --------------------------------- */
 
 int main(int argc, char **argv)
 {
-    double dt;
+    double dt; // intervalo de tempo
 
     /*
      * processar os argumentos da linha de comandos
      */
     if (argc < 3)
     {
-        fprintf(stderr, "Usage: %s student_number number_of_persons [options ...]\n", argv[0]);
-        fprintf(stderr, "Recognized options:\n");
-        fprintf(stderr, "  -list[N] [filter]             # list the tree contents, sorted by key index N (the default is index 0)\n");
-        // place a description of your own options here
-        return 1;
+        fprintf(stderr, USAGE, argv[0]);
+        return EXIT_FAILURE;
     }
 
+    /* número de estudante */
     int student_number = atoi(argv[1]);
     if (student_number < 1 || student_number >= 1000000)
     {
-        fprintf(stderr, "Bad student number (%d) --- must be an integer belonging to [1,1000000{\n", student_number);
+        fprintf(stderr, "Erro: número de estudante inválido (%d) - deve ser um inteiro no intervalo [1,1000000{\n", student_number);
         return 1;
     }
 
+    /* número de pessoas */
     int n_persons = atoi(argv[2]);
     if (n_persons < 3 || n_persons > 10000000)
     {
-        fprintf(stderr, "Bad number of persons (%d) --- must be an integer belonging to [3,10000000]\n", n_persons);
+        fprintf(stderr, "Erro: número de pessoas inválido (%d) - deve ser um inteiro no intervalo [3,10000000]\n", n_persons);
         return 1;
+    }
+
+    /* opções */
+    regex_t filter;
+    regcomp(&filter, ".*", REGEX_FLAGS); // filtro por defeito
+    int list_index = 0;                  // índice por defeito
+    int c;
+    while ((c = getopt_long(argc, argv, ":f:l", long_options, NULL)) != -1)
+    {
+        switch (c)
+        {
+        case 'f': // --filter [str]
+            if (regcomp(&filter, optarg, REGEX_FLAGS) != 0)
+            {
+                fprintf(stderr, "Erro (opção f/filter): filtro inválido\n");
+                return EXIT_FAILURE;
+            }
+            break;
+        case 'l': // --list [index]
+            if (optarg != NULL && (list_index = atoi(optarg)) < 0)
+            {
+                fprintf(stderr, "Erro (opção l/list): índice inválido (%d) - deve ser um número inteiro não negativo\n", list_index);
+                return EXIT_FAILURE;
+            }
+            list_index = (list_index >= N_MAIN_INDEXES) ? N_MAIN_INDEXES - 1 : list_index;
+            break;
+        case ':':
+            fprintf(stderr, "Erro: uma opção fornecida necessita de argumento\n");
+            return EXIT_FAILURE;
+        case '?':
+            fprintf(stderr, "Erro: foi fornecida uma opção desconhecida\n");
+            return EXIT_FAILURE;
+        }
     }
 
     /*
@@ -228,8 +284,8 @@ int main(int argc, char **argv)
     tree_node_t *persons = (tree_node_t *)calloc((size_t)n_persons, sizeof(tree_node_t));
     if (persons == NULL)
     {
-        fprintf(stderr, "Output memory!\n");
-        return 1;
+        fprintf(stderr, "Erro: memória insuficiente para gerar todos os dados\n");
+        return EXIT_FAILURE;
     }
 
     aed_srandom(student_number);
@@ -239,7 +295,7 @@ int main(int argc, char **argv)
         random_zip_code(&(persons[i].zip_code[0]));
         random_telephone_number(&(persons[i].telephone_number[0]));
         random_social_security_number(&(persons[i].social_security_number[0]));
-        for (int j = 0; j < N_DATA_TYPES; j++)
+        for (int j = 0; j < N_MAIN_INDEXES; j++)
             persons[i].left[j] = persons[i].right[j] = NULL; // garantir que os ponteiros são NULL inicialmente
     }
 
@@ -248,11 +304,11 @@ int main(int argc, char **argv)
      */
     dt = cpu_time();
 
-    tree_node_t *roots[N_DATA_TYPES]; // N índices, N raízes
-    for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
+    tree_node_t *roots[N_MAIN_INDEXES]; // N índices, N raízes
+    for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
         roots[main_index] = NULL;
     for (int i = 0; i < n_persons; i++)
-        for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
+        for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
             tree_insert(&(roots[main_index]), main_index, &(persons[i])); // place your code here to insert &(persons[i]) in the tree with number main_index
 
     dt = cpu_time() - dt;
@@ -261,16 +317,16 @@ int main(int argc, char **argv)
     /*
      * procurar nó na árvore
      */
-    for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
+    for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
     {
         dt = cpu_time();
 
         for (int i = 0; i < n_persons; i++)
         {
-            tree_node_t n = persons[i];                                   // copiar os dados do nó
-            if (find(roots[main_index], main_index, &n) != &(persons[i])) // place your code here to find a given person, searching for it using the tree with number main_index
+            tree_node_t n = persons[i]; // copiar os dados do nó
+            if (find(roots[main_index], main_index, &n) != &(persons[i]))
             {
-                fprintf(stderr, "person %d not found using index %d\n", i, main_index);
+                fprintf(stderr, "Erro: pessoa %d não foi encontrada com o índice %d\n", i, main_index);
                 return 1;
             }
         }
@@ -282,40 +338,27 @@ int main(int argc, char **argv)
     /*
      * determinar a maior profundidade da árvore
      */
-    for (int main_index = 0; main_index < N_DATA_TYPES; main_index++)
+    for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
     {
         dt = cpu_time();
 
-        int depth = tree_depth(roots[main_index], main_index); // place your code here to compute the depth of the tree with number main_index
+        int depth = tree_depth(roots[main_index], main_index);
 
         dt = cpu_time() - dt;
         printf("Tree depth for index %d: %d (done in %.3es)\n", main_index, depth, dt);
     }
 
     /*
-     * processar os argumentos opcionais da linha de comandos
+     * listar os nós da árvore, conforme o índice e o filtro forncidos
      */
-    for (int i = 3; i < argc; i++)
-    {
-        if (strncmp(argv[i], "-list", 5) == 0)
-        { // list all (optional)
-            int main_index = atoi(&(argv[i][5]));
-            if (main_index < 0)
-                main_index = 0;
-            if (main_index > 2)
-                main_index = 2;
-
-            char *filter = (argc == i + 1 || argv[i + 1][0] == '-') ? "" : argv[++i];
-
-            printf("List of persons:\n");
-            int count = 0;
-            list(roots[main_index], main_index, &count, filter); // place your code here to traverse, in order, the tree with number main_index
-        }
-    }
+    int count = 0;
+    printf("List of persons:\n");
+    list(roots[list_index], list_index, &count, &filter);
 
     /*
      * limpeza - não esquecer de testar o programa com o valgrind para verificar que não existem memory leaks
      */
     free(persons);
+    regfree(&filter);
     return 0;
 }
