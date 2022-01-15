@@ -24,7 +24,7 @@
 #define USAGE "Sintaxe: %s student_number n_persons [options ...]\n"               \
               "Opções válidas:\n"                                               \
               "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n" \
-              "    -l [N?], --list [N?]              # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
+              "    -l [N?], --list [N?]            # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
 
 /**
  * @brief Flags da expressão regular (do filtro)
