@@ -21,15 +21,24 @@
 /**
  * @brief Utilização correta do programa
  */
-#define USAGE "Sintaxe: %s n_estudante n_pessoas [opções ...]\n"                                                                                         \
-              "Opções válidas:\n"                                                                                                                       \
-              "    -l [N], --list [N]              # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n" \
-              "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n"
+#define USAGE "Sintaxe: %s student_number n_persons [options ...]\n"               \
+              "Opções válidas:\n"                                               \
+              "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n" \
+              "    -l [N?], --list [N?]              # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
 
 /**
  * @brief Flags da expressão regular (do filtro)
  */
-#define REGEX_FLAGS (REG_EXTENDED | REG_NOSUB)
+#define REGEX_FLAGS (REG_NOSUB | REG_ICASE | REG_EXTENDED)
+
+/**
+ * @brief Configuração do programa
+ */
+#define CONFIG "Configuração do programa:\n"   \
+               "    student_number ... %d\n"     \
+               "    n_persons ........ %d\n"     \
+               "    filter ........... \"%s\"\n" \
+               "    list_index ....... %d\n"
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
@@ -70,7 +79,7 @@ typedef struct tree_node_s
 int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
 {
     int i, c;
-
+    
     for (i = 0; i < N_MAIN_INDEXES; i++)
     {
         switch (main_index)
@@ -135,28 +144,30 @@ int filter_tree_node(tree_node_t *node, int main_index, regex_t *filter)
  */
 void visit(tree_node_t *node, int *count)
 {
-    printf("Person #%d\n", ++(*count));
-    printf("name ..................... %s\n", node->name);
-    printf("zip code ................. %s\n", node->zip_code);
-    printf("telephone number ......... %s\n", node->telephone_number);
-    printf("social security number ... %s\n", node->social_security_number);
+    printf("%-8d\t%-31s\t%-63s\t%-17s\t%-23s\n", ++(*count), node->name, node->zip_code, node->telephone_number, node->social_security_number);
 }
 
 /**
  * @brief Insere nó na árvore, de uma forma recursiva.
  *
- * @param link       Ponteiro para o ponteiro que aponta para o nó atual
- * @param main_index Índice da árvore
- * @param node       Ponteiro para o nó a inserir
+ * @param link           Ponteiro para o ponteiro que aponta para o nó atual
+ * @param main_index     Índice da árvore
+ * @param node           Ponteiro para o nó a inserir
+ * @param student_number Número de estudante utilizado (no caso de haver nós iguais)
  */
-void tree_insert(tree_node_t **link, int main_index, tree_node_t *node)
+void tree_insert(tree_node_t **link, int main_index, tree_node_t *node, int student_number)
 {
     if (*link == NULL)
         *link = node;
-    else if (compare_tree_nodes(node, *link, main_index) <= 0)
-        tree_insert(&((*link)->left[main_index]), main_index, node); // ramo esquerdo
+    else if (compare_tree_nodes(node, *link, main_index) < 0)
+        tree_insert(&((*link)->left[main_index]), main_index, node, student_number); // ramo esquerdo
+    else if (compare_tree_nodes(node, *link, main_index) > 0)
+        tree_insert(&((*link)->right[main_index]), main_index, node, student_number); // ramo direito
     else
-        tree_insert(&((*link)->right[main_index]), main_index, node); // ramo direito
+    {
+        fprintf(stderr, "Erro: foram gerados nós iguais - escolha um número de estudante diferente de %d\n", student_number);
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
@@ -218,7 +229,7 @@ void list(tree_node_t *link, int main_index, int *count, regex_t *filter)
 
 int main(int argc, char **argv)
 {
-    double dt; // intervalo de tempo
+    double ti, tf; // intervalo de tempo
 
     /*
      * processar os argumentos da linha de comandos
@@ -234,7 +245,7 @@ int main(int argc, char **argv)
     if (student_number < 1 || student_number >= 1000000)
     {
         fprintf(stderr, "Erro: número de estudante inválido (%d) - deve ser um inteiro no intervalo [1,1000000{\n", student_number);
-        return 1;
+        return EXIT_FAILURE;
     }
 
     /* número de pessoas */
@@ -242,24 +253,33 @@ int main(int argc, char **argv)
     if (n_persons < 3 || n_persons > 10000000)
     {
         fprintf(stderr, "Erro: número de pessoas inválido (%d) - deve ser um inteiro no intervalo [3,10000000]\n", n_persons);
-        return 1;
+        return EXIT_FAILURE;
     }
 
+    /* filtro (por defeito) */
+    int filter_flag = 0;
+    char *filter_str = ".*";
+    regex_t filter_regex;
+    regcomp(&filter_regex, filter_str, REGEX_FLAGS);
+
+    /* listar (por defeito) */
+    int list_flag = 0;
+    int list_index = 0;
+
     /* opções */
-    regex_t filter;
-    regcomp(&filter, ".*", REGEX_FLAGS); // filtro por defeito
-    int list_index = 0;                  // índice por defeito
     int c;
-    while ((c = getopt_long(argc, argv, ":f:l", long_options, NULL)) != -1)
+    while ((c = getopt_long(argc, argv, ":f:l:", long_options, NULL)) != -1)
     {
         switch (c)
         {
         case 'f': // --filter [str]
-            if (regcomp(&filter, optarg, REGEX_FLAGS) != 0)
+            filter_str = optarg;
+            if (regcomp(&filter_regex, filter_str, REGEX_FLAGS) != 0)
             {
-                fprintf(stderr, "Erro (opção f/filter): filtro inválido\n");
+                fprintf(stderr, "Erro (opção f/filter): filtro inválido (%s)\n", filter_str);
                 return EXIT_FAILURE;
             }
+            filter_flag = 1;
             break;
         case 'l': // --list [index]
             if (optarg != NULL && (list_index = atoi(optarg)) < 0)
@@ -268,15 +288,34 @@ int main(int argc, char **argv)
                 return EXIT_FAILURE;
             }
             list_index = (list_index >= N_MAIN_INDEXES) ? N_MAIN_INDEXES - 1 : list_index;
+            list_flag = 1;
             break;
         case ':':
-            fprintf(stderr, "Erro: uma opção fornecida necessita de argumento\n");
-            return EXIT_FAILURE;
+            switch (optopt)
+            {
+            case 'l':
+                list_index = 0;
+                list_flag = 1;
+                break;
+            default:
+                fprintf(stderr, "Erro: uma opção fornecida necessita de argumento\n");
+                return EXIT_FAILURE;
+            }
+            break;
         case '?':
             fprintf(stderr, "Erro: foi fornecida uma opção desconhecida\n");
             return EXIT_FAILURE;
         }
     }
+    /* foi fornecido um filtro sem ter sido pedida uma listagem */
+    if (filter_flag && !list_flag)
+    {
+        fprintf(stderr, "Erro: opção f/filter foi fornecida sem a opção l/list\n");
+        return EXIT_FAILURE;
+    }
+
+    /* configuração do programa */
+    printf(CONFIG, student_number, n_persons, filter_str, list_index);
 
     /*
      * gerar todos os dados
@@ -300,65 +339,94 @@ int main(int argc, char **argv)
     }
 
     /*
-     * criar as árvores binárias ordenadas
+     * criar as árvores ordenadas
      */
-    dt = cpu_time();
-
     tree_node_t *roots[N_MAIN_INDEXES]; // N índices, N raízes
     for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
         roots[main_index] = NULL;
-    for (int i = 0; i < n_persons; i++)
-        for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
-            tree_insert(&(roots[main_index]), main_index, &(persons[i])); // place your code here to insert &(persons[i]) in the tree with number main_index
 
-    dt = cpu_time() - dt;
-    printf("Tree creation time (%d persons): %.3es\n", n_persons, dt);
+    /* imprimir cabeçalho */
+    printf("\nCriação das árvores ordenadas:\n");
+    printf("%-9s\t%-5s\t%-12s\n", "n_persons", "index", "time");
 
-    /*
-     * procurar nó na árvore
-     */
     for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
     {
-        dt = cpu_time();
+        /* inserir todos os nós na árvore */
+        ti = cpu_time();
+        for (int i = 0; i < n_persons; i++)
+            tree_insert(&(roots[main_index]), main_index, &(persons[i]), student_number);
+        tf = cpu_time();
 
+        /* imprimir número de pessoas, índice da árvore e tempo de execução*/
+        printf("%-9d\t%-5d\t%-12e\n", n_persons, main_index, tf - ti);
+    }
+
+    /*
+     * procurar todos os nós nas árvores
+     */
+
+    /* imprimir cabeçalho */
+    printf("\nProcura de nós nas árvores:\n");
+    printf("%-9s\t%-5s\t%-12s\n", "n_persons", "index", "time");
+
+    for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
+    {
+        /* procurar todos os nós na árvore */
+        ti = cpu_time();
         for (int i = 0; i < n_persons; i++)
         {
             tree_node_t n = persons[i]; // copiar os dados do nó
             if (find(roots[main_index], main_index, &n) != &(persons[i]))
             {
-                fprintf(stderr, "Erro: pessoa %d não foi encontrada com o índice %d\n", i, main_index);
-                return 1;
+                fprintf(stderr, "Erro: pessoa %d não foi encontrada na árvore com o índice %d\n", i, main_index);
+                return EXIT_FAILURE;
             }
         }
+        tf = cpu_time();
 
-        dt = cpu_time() - dt;
-        printf("Tree search time (%d persons, index %d): %.3es\n", n_persons, main_index, dt);
+        /* imprimir número de pessoas, índice da árvore e tempo de execução */
+        printf("%-9d\t%-5d\t%-12e\n", n_persons, main_index, tf - ti);
     }
 
     /*
-     * determinar a maior profundidade da árvore
+     * determinar a maior profundidade das árvores
      */
+
+    /* imprimir cabeçalho */
+    printf("\nMaior profundidade das árvores:\n");
+    printf("%-9s\t%-5s\t%-12s\t%-5s\n", "n_persons", "index", "time", "depth");
+
     for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
     {
-        dt = cpu_time();
-
+        /* determinar a maior profundidade da árvore */
+        ti = cpu_time();
         int depth = tree_depth(roots[main_index], main_index);
+        tf = cpu_time();
 
-        dt = cpu_time() - dt;
-        printf("Tree depth for index %d: %d (done in %.3es)\n", main_index, depth, dt);
+        /* imprimir número de pessoas, índice da árvore, tempo de execução e maior profundidade da árvore*/
+        printf("%-9d\t%-5d\t%-12e\t%-5d\n", n_persons, main_index, tf - ti, depth);
     }
 
     /*
      * listar os nós da árvore, conforme o índice e o filtro forncidos
      */
-    int count = 0;
-    printf("List of persons:\n");
-    list(roots[list_index], list_index, &count, &filter);
+    if (list_flag)
+    {
+        int count = 0;
+
+        /* imprimir cabeçalho */
+        printf("\nLista de pessoas (índice %d, filtro \"%s\"):\n", list_index, filter_str);
+        printf("%-8s\t%-31s\t%-63s\t%-20s\t%-26s\n", "#", "name (0)", "zip_code (1)", "telephone number (2)", "social security number (3)");
+
+        list(roots[list_index], list_index, &count, &filter_regex);
+
+        printf("Foram listadas %d/%d pessoas\n", count, n_persons);
+    }
 
     /*
      * limpeza - não esquecer de testar o programa com o valgrind para verificar que não existem memory leaks
      */
     free(persons);
-    regfree(&filter);
+    regfree(&filter_regex);
     return 0;
 }
