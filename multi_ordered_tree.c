@@ -79,7 +79,7 @@ typedef struct tree_node_s
 int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
 {
     int i, c;
-    
+
     for (i = 0; i < N_MAIN_INDEXES; i++)
     {
         switch (main_index)
@@ -198,12 +198,30 @@ tree_node_t *find(tree_node_t *link, int main_index, tree_node_t *node)
 int tree_depth(tree_node_t *link, int main_index)
 {
     if (link == NULL)
-        return 0;
+        return -1;
 
     int left_depth = tree_depth(link->left[main_index], main_index);   // ramo esquerdo
     int right_depth = tree_depth(link->right[main_index], main_index); // ramo direito
 
     return (left_depth > right_depth) ? left_depth + 1 : right_depth + 1;
+}
+
+/**
+ * @brief Determina o número de nós em cada nível da árvore, de uma forma recursiva.
+ *
+ * @param link       Ponteiro para o nó atual
+ * @param main_index Índice da árvore
+ * @param counts     Ponteiro para o vetor das contagens
+ * @param level      Nível atual na árvore
+ */
+void count_nodes_in_levels(tree_node_t *link, int main_index, int *counts, int level)
+{
+    if (link == NULL)
+        return;
+
+    counts[level]++;
+    count_nodes_in_levels(link->left[main_index], main_index, counts, level + 1);
+    count_nodes_in_levels(link->right[main_index], main_index, counts, level + 1);
 }
 
 /**
@@ -315,7 +333,7 @@ int main(int argc, char **argv)
     }
 
     /* configuração do programa */
-    printf(CONFIG, student_number, n_persons, filter_str, list_index);
+    fprintf(stderr, CONFIG, student_number, n_persons, filter_str, list_index);
 
     /*
      * gerar todos os dados
@@ -346,7 +364,7 @@ int main(int argc, char **argv)
         roots[main_index] = NULL;
 
     /* imprimir cabeçalho */
-    printf("\nCriação das árvores ordenadas:\n");
+    printf("Criação das árvores ordenadas:\n");
     printf("%-9s\t%-5s\t%-12s\n", "n_persons", "index", "time");
 
     for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
@@ -360,13 +378,14 @@ int main(int argc, char **argv)
         /* imprimir número de pessoas, índice da árvore e tempo de execução*/
         printf("%-9d\t%-5d\t%-12e\n", n_persons, main_index, tf - ti);
     }
+    printf("\n");
 
     /*
      * procurar todos os nós nas árvores
      */
 
     /* imprimir cabeçalho */
-    printf("\nProcura de nós nas árvores:\n");
+    printf("Procura de nós nas árvores:\n");
     printf("%-9s\t%-5s\t%-12s\n", "n_persons", "index", "time");
 
     for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
@@ -387,25 +406,64 @@ int main(int argc, char **argv)
         /* imprimir número de pessoas, índice da árvore e tempo de execução */
         printf("%-9d\t%-5d\t%-12e\n", n_persons, main_index, tf - ti);
     }
+    printf("\n");
 
     /*
      * determinar a maior profundidade das árvores
      */
 
     /* imprimir cabeçalho */
-    printf("\nMaior profundidade das árvores:\n");
+    printf("Maior profundidade das árvores:\n");
     printf("%-9s\t%-5s\t%-12s\t%-5s\n", "n_persons", "index", "time", "depth");
 
+    int depths[N_MAIN_INDEXES];
     for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
     {
         /* determinar a maior profundidade da árvore */
         ti = cpu_time();
-        int depth = tree_depth(roots[main_index], main_index);
+        depths[main_index] = tree_depth(roots[main_index], main_index);
         tf = cpu_time();
 
         /* imprimir número de pessoas, índice da árvore, tempo de execução e maior profundidade da árvore*/
-        printf("%-9d\t%-5d\t%-12e\t%-5d\n", n_persons, main_index, tf - ti, depth);
+        printf("%-9d\t%-5d\t%-12e\t%-5d\n", n_persons, main_index, tf - ti, depths[main_index]);
     }
+    printf("\n");
+
+    /*
+     * determinar o número de nós em cada nível das árvores
+     */
+
+    /* profundidade máxima de entre todas as árvores */
+    int max_depth = 0;
+    for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
+        max_depth = (depths[main_index] > max_depth) ? depths[main_index] : max_depth;
+
+    /* imprimir cabeçalho */
+    printf("\nNúmero de nós em cada nível:\n");
+    printf("%-9s\t%-5s\t%-12s", "n_persons", "index", "time");
+    for (int i = 0; i <= max_depth; i++)
+        printf("\t%-3s%-3d", "lvl", i);
+    printf("\n");
+
+    for (int main_index = 0; main_index < N_MAIN_INDEXES; main_index++)
+    {
+        int n_levels = depths[main_index] + 1;
+        int *counts = (int *)calloc(n_levels, sizeof(int));
+
+        /* determinar o número de nós em cada nível da árvore */
+        ti = cpu_time();
+        count_nodes_in_levels(roots[main_index], main_index, counts, 0);
+        tf = cpu_time();
+
+        /* imprimir número de pessoas, índice da árvore, tempo de execução e número de nós por nível*/
+        printf("%-9d\t%-5d\t%-12e", n_persons, main_index, tf - ti);
+        for (int i = 0; i < n_levels; i++)
+            printf("\t%-6d", counts[i]);
+        printf("\n");
+
+        free(counts);
+    }
+    printf("\n");
 
     /*
      * listar os nós da árvore, conforme o índice e o filtro forncidos
@@ -415,12 +473,13 @@ int main(int argc, char **argv)
         int count = 0;
 
         /* imprimir cabeçalho */
-        printf("\nLista de pessoas (índice %d, filtro \"%s\"):\n", list_index, filter_str);
+        printf("Lista de pessoas (índice %d, filtro \"%s\"):\n", list_index, filter_str);
         printf("%-8s\t%-31s\t%-63s\t%-20s\t%-26s\n", "#", "name (0)", "zip_code (1)", "telephone number (2)", "social security number (3)");
 
         list(roots[list_index], list_index, &count, &filter_regex);
 
         printf("Foram listadas %d/%d pessoas\n", count, n_persons);
+        printf("\n");
     }
 
     /*
