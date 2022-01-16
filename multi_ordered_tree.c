@@ -14,6 +14,7 @@
 #include <string.h>
 #include <getopt.h>
 #include <regex.h>
+#include <math.h>
 #include "AED_2021_A02.h"
 
 /* ------------------------------------------- Macros ------------------------------------------- */
@@ -21,7 +22,7 @@
 /**
  * @brief Utilização correta do programa
  */
-#define USAGE "Sintaxe: %s student_number n_persons [options ...]\n"               \
+#define USAGE "Sintaxe: %s n_mec n_persons [options ...]\n"               \
               "Opções válidas:\n"                                               \
               "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n" \
               "    -l [N?], --list [N?]            # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
@@ -35,10 +36,10 @@
  * @brief Configuração do programa
  */
 #define CONFIG "Configuração do programa:\n"   \
-               "    student_number ... %d\n"     \
-               "    n_persons ........ %d\n"     \
-               "    filter ........... \"%s\"\n" \
-               "    list_index ....... %d\n"
+               "    n_mec ....... %d\n"     \
+               "    n_persons ... %d\n"     \
+               "    filter ...... \"%s\"\n" \
+               "    list_index .. %d\n"
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
@@ -150,22 +151,22 @@ void visit(tree_node_t *node, int *count)
 /**
  * @brief Insere nó na árvore, de uma forma recursiva.
  *
- * @param link           Ponteiro para o ponteiro que aponta para o nó atual
- * @param main_index     Índice da árvore
- * @param node           Ponteiro para o nó a inserir
- * @param student_number Número de estudante utilizado (no caso de haver nós iguais)
+ * @param link       Ponteiro para o ponteiro que aponta para o nó atual
+ * @param main_index Índice da árvore
+ * @param node       Ponteiro para o nó a inserir
+ * @param n_mec      Número de estudante utilizado (utilizado apenas no caso de haver nós iguais)
  */
-void tree_insert(tree_node_t **link, int main_index, tree_node_t *node, int student_number)
+void tree_insert(tree_node_t **link, int main_index, tree_node_t *node, int n_mec)
 {
     if (*link == NULL)
         *link = node;
     else if (compare_tree_nodes(node, *link, main_index) < 0)
-        tree_insert(&((*link)->left[main_index]), main_index, node, student_number); // ramo esquerdo
+        tree_insert(&((*link)->left[main_index]), main_index, node, n_mec); // ramo esquerdo
     else if (compare_tree_nodes(node, *link, main_index) > 0)
-        tree_insert(&((*link)->right[main_index]), main_index, node, student_number); // ramo direito
+        tree_insert(&((*link)->right[main_index]), main_index, node, n_mec); // ramo direito
     else
     {
-        fprintf(stderr, "Erro: foram gerados nós iguais - escolha um número de estudante diferente de %d\n", student_number);
+        fprintf(stderr, "Erro: foram gerados nós iguais - escolha um número de estudante diferente de %d\n", n_mec);
         exit(EXIT_FAILURE);
     }
 }
@@ -259,10 +260,10 @@ int main(int argc, char **argv)
     }
 
     /* número de estudante */
-    int student_number = atoi(argv[1]);
-    if (student_number < 1 || student_number >= 1000000)
+    int n_mec = atoi(argv[1]);
+    if (n_mec < 1 || n_mec >= 1000000)
     {
-        fprintf(stderr, "Erro: número de estudante inválido (%d) - deve ser um inteiro no intervalo [1,1000000{\n", student_number);
+        fprintf(stderr, "Erro: número de estudante inválido (%d) - deve ser um inteiro no intervalo [1,1000000{\n", n_mec);
         return EXIT_FAILURE;
     }
 
@@ -333,7 +334,7 @@ int main(int argc, char **argv)
     }
 
     /* configuração do programa */
-    fprintf(stderr, CONFIG, student_number, n_persons, filter_str, list_index);
+    fprintf(stderr, CONFIG, n_mec, n_persons, filter_str, list_index);
 
     /*
      * gerar todos os dados
@@ -345,7 +346,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    aed_srandom(student_number);
+    aed_srandom(n_mec);
     for (int i = 0; i < n_persons; i++)
     {
         random_name(&(persons[i].name[0]));
@@ -372,7 +373,7 @@ int main(int argc, char **argv)
         /* inserir todos os nós na árvore */
         ti = cpu_time();
         for (int i = 0; i < n_persons; i++)
-            tree_insert(&(roots[main_index]), main_index, &(persons[i]), student_number);
+            tree_insert(&(roots[main_index]), main_index, &(persons[i]), n_mec);
         tf = cpu_time();
 
         /* imprimir número de pessoas, índice da árvore e tempo de execução*/
@@ -439,7 +440,7 @@ int main(int argc, char **argv)
         max_depth = (depths[main_index] > max_depth) ? depths[main_index] : max_depth;
 
     /* imprimir cabeçalho */
-    printf("\nNúmero de nós em cada nível:\n");
+    printf("Número de nós em cada nível:\n");
     printf("%-9s\t%-5s\t%-12s", "n_persons", "index", "time");
     for (int i = 0; i <= max_depth; i++)
         printf("\t%-3s%-3d", "lvl", i);
@@ -457,8 +458,11 @@ int main(int argc, char **argv)
 
         /* imprimir número de pessoas, índice da árvore, tempo de execução e número de nós por nível*/
         printf("%-9d\t%-5d\t%-12e", n_persons, main_index, tf - ti);
-        for (int i = 0; i < n_levels; i++)
-            printf("\t%-6d", counts[i]);
+        int lvl;
+        for (lvl = 0; lvl < n_levels; lvl++)
+            printf("\t%-6d", counts[lvl]);
+        for (; lvl <= max_depth; lvl++)
+            printf("\t%-6f", NAN);
         printf("\n");
 
         free(counts);
