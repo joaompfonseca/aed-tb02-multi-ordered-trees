@@ -22,7 +22,7 @@
 /**
  * @brief Utilização correta do programa
  */
-#define USAGE "Sintaxe: %s n_mec n_persons [options ...]\n"               \
+#define USAGE "Sintaxe: %s n_mec n_persons [options ...]\n"                        \
               "Opções válidas:\n"                                               \
               "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n" \
               "    -l [N?], --list [N?]            # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
@@ -35,10 +35,10 @@
 /**
  * @brief Configuração do programa
  */
-#define CONFIG "Configuração do programa:\n"   \
-               "    n_mec ....... %d\n"     \
-               "    n_persons ... %d\n"     \
-               "    filter ...... \"%s\"\n" \
+#define CONFIG "Configuração do programa:\n" \
+               "    n_mec ....... %d\n"        \
+               "    n_persons ... %d\n"        \
+               "    filter ...... \"%s\"\n"    \
                "    list_index .. %d\n"
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
@@ -306,7 +306,15 @@ int main(int argc, char **argv)
                 fprintf(stderr, "Erro (opção l/list): índice inválido (%d) - deve ser um número inteiro não negativo\n", list_index);
                 return EXIT_FAILURE;
             }
-            list_index = (list_index >= N_MAIN_INDEXES) ? N_MAIN_INDEXES - 1 : list_index;
+            else if (optarg[0] == '-')
+            {
+                list_index = 0;
+                optind--;
+            }
+            else
+            {
+                list_index = (list_index >= N_MAIN_INDEXES) ? N_MAIN_INDEXES - 1 : list_index;
+            }
             list_flag = 1;
             break;
         case ':':
