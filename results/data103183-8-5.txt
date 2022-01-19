@@ -1,0 +1,28 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+8        	0    	2.056000e-06
+8        	1    	1.058000e-06
+8        	2    	1.229000e-06
+8        	3    	1.311000e-06
+
+Procura de nós nas árvores:
+n_persons	index	time        
+8        	0    	2.662000e-06
+8        	1    	2.278000e-06
+8        	2    	2.308000e-06
+8        	3    	2.113000e-06
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+8        	0    	6.340000e-07	5    
+8        	1    	5.320000e-07	3    
+8        	2    	5.020000e-07	6    
+8        	3    	6.070000e-07	4    
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  
+8        	0    	6.010000e-07	1     	2     	1     	2     	1     	1     	nan   
+8        	1    	5.610000e-07	1     	2     	4     	1     	nan   	nan   	nan   
+8        	2    	4.930000e-07	1     	1     	2     	1     	1     	1     	1     
+8        	3    	5.790000e-07	1     	2     	2     	2     	1     	nan   	nan   
+
