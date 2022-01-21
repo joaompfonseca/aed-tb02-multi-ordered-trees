@@ -86,16 +86,25 @@ typedef struct filter_s
     regex_t regex;
 } filter_t;
 
+/**
+ * @brief Contagem de pessoas e de nós percorridos
+ */
+typedef struct pn_count_s
+{
+    int persons;
+    int nodes;
+} pn_count_t;
+
 /* ------------------------------------------ Funções ------------------------------------------- */
 
 /**
- * @brief Compara dois nós da árvore.
- *
- * @param node1      Ponteiro para o nó 1
- * @param node2      Ponteiro para o nó 2
- * @param main_index Índice da árvore
- * @return           Resultado da comparação
- */
+     * @brief Compara dois nós da árvore.
+     *
+     * @param node1      Ponteiro para o nó 1
+     * @param node2      Ponteiro para o nó 2
+     * @param main_index Índice da árvore
+     * @return           Resultado da comparação
+     */
 int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
 {
     int i, c;
@@ -123,6 +132,36 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
         main_index = (main_index == N_MAIN_INDEXES - 1) ? 0 : main_index + 1; // próxima árvore
     }
     return 0;
+}
+
+/**
+ * @brief Compara o dado no índice da árvore a uma string.
+ *
+ * @param node       Ponteiro para o nó
+ * @param main_index Índice da árvore
+ * @param str        Ponteiro para a string
+ * @return           Resultado da comparação
+ */
+int compare_tree_data(tree_node_t *node, int main_index, char *str)
+{
+    char *data = NULL;
+    switch (main_index)
+    {
+    case 0:
+        data = node->name;
+        break;
+    case 1:
+        data = node->zip_code;
+        break;
+    case 2:
+        data = node->telephone_number;
+        break;
+    case 3:
+        data = node->social_security_number;
+        break;
+    }
+
+    return strncasecmp(str, data, strlen(str));
 }
 
 /**
@@ -159,7 +198,7 @@ int filter_tree_node(tree_node_t *node, int main_index, filter_t *filter)
  * @brief Imprime os dados do nó.
  *
  * @param node  Ponteiro para o nó
- * @param count Ponteiro para o número de nós listados
+ * @param count Ponteiro para o número de pessoas listadas
  */
 void visit(tree_node_t *node, int *count)
 {
@@ -248,18 +287,24 @@ void count_nodes_in_levels(tree_node_t *link, int main_index, int *counts, int l
  *
  * @param link       Ponteiro para o nó atual
  * @param main_index Índice da árvore
- * @param count      Ponteiro para o número de nós listados
+ * @param count      Ponteiro para as contagens do número de pessoas listadas e número de nós percorridos
  * @param filter     Ponteiro para as informações sobre o filtro
  */
-void list_nodes(tree_node_t *link, int main_index, int *count, filter_t *filter)
+void list_nodes(tree_node_t *link, int main_index, pn_count_t *count, filter_t *filter)
 {
     if (link == NULL)
         return;
 
-    list_nodes(link->left[main_index], main_index, count, filter);
+    (count->nodes)++;
+
+    if (filter->str[0] != '^' || compare_tree_data(link, main_index, filter->str + 1) <= 0)
+        list_nodes(link->left[main_index], main_index, count, filter); // ramo esquerdo
+
     if (filter_tree_node(link, main_index, filter))
-        visit(link, count);
-    list_nodes(link->right[main_index], main_index, count, filter);
+        visit(link, &(count->persons)); // imprimir os dados do nó
+
+    if (filter->str[0] != '^' || compare_tree_data(link, main_index, filter->str + 1) >= 0)
+        list_nodes(link->right[main_index], main_index, count, filter); // ramo direito
 }
 
 /* -------------------------------- Fluxo de Execução Principal --------------------------------- */
@@ -292,16 +337,15 @@ int main(int argc, char **argv)
         fprintf(stderr, "Erro: número de pessoas inválido (%d) - deve ser um inteiro no intervalo [3,10000000]\n", n_persons);
         return EXIT_FAILURE;
     }
-    char *stt = ".*";
 
     /* filtro (por defeito) */
-    filter_t *filter = (filter_t *)malloc(sizeof(filter_t));
+    filter_t *filter = (filter_t *)malloc(1 * sizeof(filter_t));
     filter->flag = 0;
-    filter->str = &stt[0];
+    filter->str = (char *)&(".*");
     regcomp(&(filter->regex), filter->str, REGEX_FLAGS);
 
     /* listar (por defeito) */
-    list_t *list = (list_t *)malloc(sizeof(list_t));
+    list_t *list = (list_t *)malloc(1 * sizeof(list_t));
     list->flag = 0;
     list->index = 0;
 
@@ -499,7 +543,7 @@ int main(int argc, char **argv)
      */
     if (list->flag)
     {
-        int count = 0;
+        pn_count_t count = {.persons = 0, .nodes = 0};
 
         /* imprimir cabeçalho */
         printf("Lista de pessoas (índice %d, filtro \"%s\"):\n", list->index, filter->str);
@@ -507,7 +551,8 @@ int main(int argc, char **argv)
 
         list_nodes(roots[list->index], list->index, &count, filter);
 
-        printf("Foram listadas %d/%d pessoas\n", count, n_persons);
+        printf("Foram listadas %d/%d pessoas\n", count.persons, n_persons);
+        printf("Foram percorridos %d/%d nós da árvore\n", count.nodes, n_persons);
         printf("\n");
     }
 
