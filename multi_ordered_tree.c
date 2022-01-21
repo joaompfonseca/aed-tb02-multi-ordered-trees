@@ -44,14 +44,6 @@
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
 /**
- * @brief Opções disponíveis no programa.
- */
-static struct option long_options[] = {
-    {"filter", required_argument, NULL, 'f'},
-    {"list", required_argument, NULL, 'l'},
-    {NULL, 0, NULL, 0}};
-
-/**
  * @brief Estrutura do nó personalizado da árvore
  *
  * Queremos manter N_MAIN_INDEXES árvores ordenadas (utilizando os mesmos nós!), logo necessitamos de N_MAIN_INDEXES ponteiros para a esquerda e N_MAIN_INDEXES ponteiros para a direita.
@@ -66,6 +58,33 @@ typedef struct tree_node_s
     struct tree_node_s *left[N_MAIN_INDEXES];                         // ponteiros para a esquerda (um para cada índice) - esquerda significa menor
     struct tree_node_s *right[N_MAIN_INDEXES];                        // ponteiros para a direita (um para cada índice) - direita significa maior
 } tree_node_t;
+
+/**
+ * @brief Opções disponíveis no programa.
+ */
+static struct option long_options[] = {
+    {"filter", required_argument, NULL, 'f'},
+    {"list", required_argument, NULL, 'l'},
+    {NULL, 0, NULL, 0}};
+
+/**
+ * @brief Informações sobre a listagem
+ */
+typedef struct list_s
+{
+    int flag;
+    int index;
+} list_t;
+
+/**
+ * @brief Informações sobre o filtro
+ */
+typedef struct filter_s
+{
+    int flag;
+    char *str;
+    regex_t regex;
+} filter_t;
 
 /* ------------------------------------------ Funções ------------------------------------------- */
 
@@ -111,13 +130,12 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
  *
  * @param node       Ponteiro para o nó
  * @param main_index Índice da árvore
- * @param filter     Ponteiro para o filtro
+ * @param filter     Ponteiro para as informações sobre o filtro
  * @return           Resultado da filtragem
  */
-int filter_tree_node(tree_node_t *node, int main_index, regex_t *filter)
+int filter_tree_node(tree_node_t *node, int main_index, filter_t *filter)
 {
     char *data = NULL;
-
     switch (main_index)
     {
     case 0:
@@ -134,7 +152,7 @@ int filter_tree_node(tree_node_t *node, int main_index, regex_t *filter)
         break;
     }
 
-    return (regexec(filter, data, 0, NULL, 0)) ? 0 : 1;
+    return regexec(&(filter->regex), data, 0, NULL, 0) == 0;
 }
 
 /**
@@ -231,17 +249,17 @@ void count_nodes_in_levels(tree_node_t *link, int main_index, int *counts, int l
  * @param link       Ponteiro para o nó atual
  * @param main_index Índice da árvore
  * @param count      Ponteiro para o número de nós listados
- * @param filter     Ponteiro para o filtro
+ * @param filter     Ponteiro para as informações sobre o filtro
  */
-void list(tree_node_t *link, int main_index, int *count, regex_t *filter)
+void list_nodes(tree_node_t *link, int main_index, int *count, filter_t *filter)
 {
     if (link == NULL)
         return;
 
-    list(link->left[main_index], main_index, count, filter);
+    list_nodes(link->left[main_index], main_index, count, filter);
     if (filter_tree_node(link, main_index, filter))
         visit(link, count);
-    list(link->right[main_index], main_index, count, filter);
+    list_nodes(link->right[main_index], main_index, count, filter);
 }
 
 /* -------------------------------- Fluxo de Execução Principal --------------------------------- */
@@ -274,16 +292,18 @@ int main(int argc, char **argv)
         fprintf(stderr, "Erro: número de pessoas inválido (%d) - deve ser um inteiro no intervalo [3,10000000]\n", n_persons);
         return EXIT_FAILURE;
     }
+    char *stt = ".*";
 
     /* filtro (por defeito) */
-    int filter_flag = 0;
-    char *filter_str = ".*";
-    regex_t filter_regex;
-    regcomp(&filter_regex, filter_str, REGEX_FLAGS);
+    filter_t *filter = (filter_t *)malloc(sizeof(filter_t));
+    filter->flag = 0;
+    filter->str = &stt[0];
+    regcomp(&(filter->regex), filter->str, REGEX_FLAGS);
 
     /* listar (por defeito) */
-    int list_flag = 0;
-    int list_index = 0;
+    list_t *list = (list_t *)malloc(sizeof(list_t));
+    list->flag = 0;
+    list->index = 0;
 
     /* opções */
     int c;
@@ -292,37 +312,34 @@ int main(int argc, char **argv)
         switch (c)
         {
         case 'f': // --filter [str]
-            filter_str = optarg;
-            if (regcomp(&filter_regex, filter_str, REGEX_FLAGS) != 0)
+            filter->str = optarg;
+            if (regcomp(&(filter->regex), filter->str, REGEX_FLAGS) != 0)
             {
-                fprintf(stderr, "Erro (opção f/filter): filtro inválido (%s)\n", filter_str);
+                fprintf(stderr, "Erro (opção f/filter): filtro inválido (%s)\n", filter->str);
                 return EXIT_FAILURE;
             }
-            filter_flag = 1;
+            filter->flag = 1;
             break;
         case 'l': // --list [index]
-            if (optarg != NULL && (list_index = atoi(optarg)) < 0)
+            list->index = atoi(optarg);
+            if (list->index < 0 || list->index > N_MAIN_INDEXES - 1)
             {
-                fprintf(stderr, "Erro (opção l/list): índice inválido (%d) - deve ser um número inteiro não negativo\n", list_index);
+                fprintf(stderr, "Erro (opção l/list): índice inválido (%d) - deve ser um inteiro no intervalo [0,%d]\n", list->index, N_MAIN_INDEXES - 1);
                 return EXIT_FAILURE;
             }
-            else if (optarg[0] == '-')
-            {
-                list_index = 0;
+            if (strncmp(optarg, "-l", 2) == 0 ||
+                strncmp(optarg, "--list", 6) == 0 ||
+                strncmp(optarg, "-f", 2) == 0 ||
+                strncmp(optarg, "--filter", 8) == 0)
                 optind--;
-            }
-            else
-            {
-                list_index = (list_index >= N_MAIN_INDEXES) ? N_MAIN_INDEXES - 1 : list_index;
-            }
-            list_flag = 1;
+            list->flag = 1;
             break;
         case ':':
             switch (optopt)
             {
             case 'l':
-                list_index = 0;
-                list_flag = 1;
+                list->index = 0;
+                list->flag = 1;
                 break;
             default:
                 fprintf(stderr, "Erro: uma opção fornecida necessita de argumento\n");
@@ -335,14 +352,14 @@ int main(int argc, char **argv)
         }
     }
     /* foi fornecido um filtro sem ter sido pedida uma listagem */
-    if (filter_flag && !list_flag)
+    if (filter->flag && !list->flag)
     {
         fprintf(stderr, "Erro: opção f/filter foi fornecida sem a opção l/list\n");
         return EXIT_FAILURE;
     }
 
     /* configuração do programa */
-    fprintf(stderr, CONFIG, n_mec, n_persons, filter_str, list_index);
+    fprintf(stderr, CONFIG, n_mec, n_persons, filter->str, list->index);
 
     /*
      * gerar todos os dados
@@ -480,15 +497,15 @@ int main(int argc, char **argv)
     /*
      * listar os nós da árvore, conforme o índice e o filtro forncidos
      */
-    if (list_flag)
+    if (list->flag)
     {
         int count = 0;
 
         /* imprimir cabeçalho */
-        printf("Lista de pessoas (índice %d, filtro \"%s\"):\n", list_index, filter_str);
+        printf("Lista de pessoas (índice %d, filtro \"%s\"):\n", list->index, filter->str);
         printf("%-8s\t%-31s\t%-63s\t%-20s\t%-26s\n", "#", "name (0)", "zip_code (1)", "telephone number (2)", "social security number (3)");
 
-        list(roots[list_index], list_index, &count, &filter_regex);
+        list_nodes(roots[list->index], list->index, &count, filter);
 
         printf("Foram listadas %d/%d pessoas\n", count, n_persons);
         printf("\n");
@@ -498,6 +515,9 @@ int main(int argc, char **argv)
      * limpeza - não esquecer de testar o programa com o valgrind para verificar que não existem memory leaks
      */
     free(persons);
-    regfree(&filter_regex);
+    free(list);
+    regfree(&(filter->regex));
+    free(filter);
+
     return 0;
 }
