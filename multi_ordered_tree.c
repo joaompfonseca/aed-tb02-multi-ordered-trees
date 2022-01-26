@@ -41,6 +41,14 @@
                "    filter ...... \"%s\"\n"    \
                "    list_index .. %d\n"
 
+/**
+ * @brief Opções disponíveis no programa.
+ */
+static struct option long_options[] = {
+    {"filter", required_argument, NULL, 'f'},
+    {"list", required_argument, NULL, 'l'},
+    {NULL, 0, NULL, 0}};
+
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
 /**
@@ -58,14 +66,6 @@ typedef struct tree_node_s
     struct tree_node_s *left[N_MAIN_INDEXES];                         // ponteiros para a esquerda (um para cada índice) - esquerda significa menor
     struct tree_node_s *right[N_MAIN_INDEXES];                        // ponteiros para a direita (um para cada índice) - direita significa maior
 } tree_node_t;
-
-/**
- * @brief Opções disponíveis no programa.
- */
-static struct option long_options[] = {
-    {"filter", required_argument, NULL, 'f'},
-    {"list", required_argument, NULL, 'l'},
-    {NULL, 0, NULL, 0}};
 
 /**
  * @brief Informações sobre a listagem
@@ -95,7 +95,7 @@ typedef struct pn_count_s
     int nodes;
 } pn_count_t;
 
-/* ------------------------------------------ Funções ------------------------------------------- */
+/* ------------------------------------- Funções de Suporte ------------------------------------- */
 
 /**
      * @brief Compara dois nós da árvore.
@@ -204,6 +204,8 @@ void visit(tree_node_t *node, int *count)
 {
     printf("%-8d\t%-31s\t%-63s\t%-17s\t%-23s\n", ++(*count), node->name, node->zip_code, node->telephone_number, node->social_security_number);
 }
+
+/* ------------------------------------------ Funções ------------------------------------------- */
 
 /**
  * @brief Insere nó na árvore, de uma forma recursiva.
@@ -549,10 +551,15 @@ int main(int argc, char **argv)
         printf("Lista de pessoas (índice %d, filtro \"%s\"):\n", list->index, filter->str);
         printf("%-8s\t%-31s\t%-63s\t%-20s\t%-26s\n", "#", "name (0)", "zip_code (1)", "telephone number (2)", "social security number (3)");
 
-        list_nodes(roots[list->index], list->index, &count, filter);
 
-        printf("Foram listadas %d/%d pessoas\n", count.persons, n_persons);
-        printf("Foram percorridos %d/%d nós da árvore\n", count.nodes, n_persons);
+        ti = cpu_time();
+        list_nodes(roots[list->index], list->index, &count, filter);
+        tf = cpu_time();
+
+        printf("Foram listadas %d / %d pessoas\n", count.persons, n_persons);
+        printf("Foram percorridos %d / %d nós da árvore\n", count.nodes, n_persons);
+        printf("Tempo de execução: %e\n", tf - ti);
+
         printf("\n");
     }
 

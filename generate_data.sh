@@ -1,18 +1,25 @@
 #!/bin/bash
 
-[[ $# -ne 2 ]] && echo "Sintaxe: $0 [nMec] [nExp]" && exit 1
-[[ $1 -lt 1 || $1 -ge 1000000 ]] && echo "Número de estudante inválido!" && exit 1
-[[ $2 -le 0 ]] && echo "Número de experiências inválido!" && exit 1
+[[ $# -ne 9 ]] && echo "Sintaxe: $0 [nMecMin] [nMecMax] [nPersonsMin] [nPersonsMax] [nExp] [list_flag] [list_index] [clever_filter_flag] [filter]" && exit 1
 
-# Para cada número de pessoas
-i=4
-while [[ $i -le 10000000 ]]
+# Para cada número de estudante
+for nmec in $(seq $1 $2)
 do
-    # Realizar e experiências
-    for e in $(seq 1 $2)
+    
+    # Para cada número de pessoas
+    nper=$3
+    while [[ nper -le $4 ]]
     do
-        ./multi_ordered_tree $1 $i > "./results/data$1-$i-$e.txt" # data[n_mec]-[n_persons]-[n_exp].txt
+
+        # Realizar e experiências
+        for exp in $(seq 1 $5)
+        do
+            [[ $6 -eq 1 ]] && ./multi_ordered_tree $nmec $nper --list $7 --filter "$9" > "./results_list/data$nmec-$nper-$exp-$8.txt"
+            [[ $6 -eq 0 ]] && ./multi_ordered_tree $nmec $nper > "./results/data$nmec-$nper-$exp.txt"
+        done
+
+        nper=$((nper<<1))
+
     done
 
-    i=$((i<<1))
 done
