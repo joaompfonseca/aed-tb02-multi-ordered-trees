@@ -1,0 +1,44 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+1024     	0    	1.624000e-04
+1024     	1    	1.871000e-04
+1024     	2    	1.582000e-04
+1024     	3    	1.339000e-04
+
+Procura de nós nas árvores:
+n_persons	index	time        
+1024     	0    	2.022000e-04
+1024     	1    	2.294000e-04
+1024     	2    	2.033000e-04
+1024     	3    	1.785000e-04
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+1024     	0    	1.350000e-05	24   
+1024     	1    	1.270000e-05	19   
+1024     	2    	1.340000e-05	21   
+1024     	3    	1.330000e-05	21   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 	lvl21 	lvl22 	lvl23 	lvl24 
+1024     	0    	1.220000e-05	1     	2     	4     	7     	12    	21    	31    	47    	70    	65    	77    	76    	80    	87    	85    	81    	75    	72    	53    	33    	17    	17    	9     	1     	1     
+1024     	1    	1.200000e-05	1     	2     	4     	8     	15    	28    	45    	64    	72    	104   	112   	123   	113   	101   	91    	65    	47    	20    	5     	4     	nan   	nan   	nan   	nan   	nan   
+1024     	2    	1.190000e-05	1     	2     	4     	8     	15    	29    	50    	78    	110   	134   	132   	124   	103   	77    	49    	38    	31    	21    	11    	3     	3     	1     	nan   	nan   	nan   
+1024     	3    	1.200000e-05	1     	2     	4     	8     	16    	30    	48    	68    	92    	122   	139   	132   	113   	93    	67    	44    	24    	9     	5     	3     	3     	1     	nan   	nan   	nan   
+
+Lista de pessoas (índice 0, filtro "^John "):
+#       	name (0)                       	zip_code (1)                                                   	telephone number (2)	social security number (3)
+1       	John Ali                       	30127 Powder Springs (Cobb county)                             	4813 850 860     	652-21-2925            
+2       	John Bernard                   	78228 San Antonio (Bexar county)                               	3016 104 630     	499-82-1728            
+3       	John Bonilla                   	30044 Lawrenceville (Gwinnett county)                          	5018 138 794     	573-10-8928            
+4       	John Collins                   	91766 Pomona (Los Angeles county)                              	3506 971 334     	173-31-1732            
+5       	John Drake                     	91766 Pomona (Los Angeles county)                              	2016 647 865     	196-58-8472            
+6       	John Harris                    	30047 Lilburn (Gwinnett county)                                	2148 234 639     	306-86-5447            
+7       	John Johnson                   	78660 Pflugerville (Travis county)                             	3564 085 042     	674-24-3500            
+8       	John Lu                        	29072 Lexington (Lexington county)                             	7368 891 344     	919-58-0310            
+9       	John Scott                     	32244 Jacksonville (Duval county)                              	2441 035 625     	075-95-3346            
+10      	John Thomas                    	72401 Jonesboro (Craighead county)                             	2617 303 495     	134-60-7150            
+Foram listadas 10 / 1024 pessoas
+Foram percorridos 24 / 1024 nós da árvore
+Tempo de execução: 2.340000e-05
+

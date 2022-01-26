@@ -1,0 +1,36 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+128      	0    	1.850000e-05
+128      	1    	1.390000e-05
+128      	2    	1.250000e-05
+128      	3    	1.420000e-05
+
+Procura de nós nas árvores:
+n_persons	index	time        
+128      	0    	1.800000e-05
+128      	1    	1.650000e-05
+128      	2    	1.680000e-05
+128      	3    	1.710000e-05
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+128      	0    	2.100000e-06	16   
+128      	1    	2.000000e-06	14   
+128      	2    	1.800000e-06	13   
+128      	3    	1.800000e-06	12   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 
+128      	0    	1.900000e-06	1     	2     	4     	6     	7     	9     	11    	8     	11    	11    	12    	17    	12    	9     	5     	2     	1     
+128      	1    	1.700000e-06	1     	2     	4     	7     	12    	15    	18    	14    	16    	14    	11    	5     	3     	3     	3     	nan   	nan   
+128      	2    	1.800000e-06	1     	2     	4     	8     	14    	21    	22    	22    	11    	8     	3     	4     	5     	3     	nan   	nan   	nan   
+128      	3    	1.700000e-06	1     	2     	4     	6     	11    	20    	16    	21    	20    	13    	8     	4     	2     	nan   	nan   	nan   	nan   
+
+Lista de pessoas (índice 0, filtro "^John "):
+#       	name (0)                       	zip_code (1)                                                   	telephone number (2)	social security number (3)
+1       	John Drake                     	91766 Pomona (Los Angeles county)                              	2016 647 865     	196-58-8472            
+2       	John Scott                     	32244 Jacksonville (Duval county)                              	2441 035 625     	075-95-3346            
+Foram listadas 2 / 128 pessoas
+Foram percorridos 12 / 128 nós da árvore
+Tempo de execução: 1.610000e-05
+

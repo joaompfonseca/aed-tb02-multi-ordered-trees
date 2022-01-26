@@ -1,0 +1,35 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+8        	0    	2.000000e-06
+8        	1    	9.000000e-07
+8        	2    	9.000000e-07
+8        	3    	1.000000e-06
+
+Procura de nós nas árvores:
+n_persons	index	time        
+8        	0    	1.600000e-06
+8        	1    	1.400000e-06
+8        	2    	1.400000e-06
+8        	3    	1.400000e-06
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+8        	0    	7.000000e-07	7    
+8        	1    	1.400000e-05	3    
+8        	2    	7.000000e-07	4    
+8        	3    	6.000000e-07	4    
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  
+8        	0    	6.000000e-07	1     	1     	1     	1     	1     	1     	1     	1     
+8        	1    	7.000000e-07	1     	2     	3     	2     	nan   	nan   	nan   	nan   
+8        	2    	7.000000e-07	1     	1     	2     	3     	1     	nan   	nan   	nan   
+8        	3    	6.000000e-07	1     	1     	2     	3     	1     	nan   	nan   	nan   
+
+Lista de pessoas (índice 0, filtro "John "):
+#       	name (0)                       	zip_code (1)                                                   	telephone number (2)	social security number (3)
+1       	John Drake                     	91766 Pomona (Los Angeles county)                              	2016 647 865     	196-58-8472            
+Foram listadas 1 / 8 pessoas
+Foram percorridos 8 / 8 nós da árvore
+Tempo de execução: 1.440000e-05
+

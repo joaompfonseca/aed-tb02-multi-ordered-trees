@@ -1,0 +1,97 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+4096     	0    	8.367000e-04
+4096     	1    	1.064800e-03
+4096     	2    	9.188000e-04
+4096     	3    	8.839000e-04
+
+Procura de nós nas árvores:
+n_persons	index	time        
+4096     	0    	1.060500e-03
+4096     	1    	1.447500e-03
+4096     	2    	1.107400e-03
+4096     	3    	1.020500e-03
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+4096     	0    	8.010000e-05	31   
+4096     	1    	7.610000e-05	24   
+4096     	2    	6.770000e-05	25   
+4096     	3    	6.700000e-05	26   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 	lvl21 	lvl22 	lvl23 	lvl24 	lvl25 	lvl26 	lvl27 	lvl28 	lvl29 	lvl30 	lvl31 
+4096     	0    	7.130000e-05	1     	2     	4     	8     	16    	28    	43    	73    	116   	152   	197   	232   	249   	280   	298   	314   	323   	314   	306   	285   	244   	195   	152   	110   	81    	37    	15    	12    	4     	3     	1     	1     
+4096     	1    	5.890000e-05	1     	2     	4     	8     	16    	31    	60    	101   	148   	204   	259   	326   	373   	429   	441   	423   	378   	311   	252   	154   	92    	45    	25    	11    	2     	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+4096     	2    	6.170000e-05	1     	2     	4     	8     	15    	30    	55    	102   	166   	249   	349   	443   	490   	491   	442   	380   	291   	201   	153   	83    	58    	38    	26    	12    	6     	1     	nan   	nan   	nan   	nan   	nan   	nan   
+4096     	3    	6.210000e-05	1     	2     	4     	8     	16    	32    	61    	100   	159   	245   	322   	410   	447   	454   	431   	402   	329   	243   	163   	111   	75    	48    	22    	7     	2     	1     	1     	nan   	nan   	nan   	nan   	nan   
+
+Lista de pessoas (índice 0, filtro "^John "):
+#       	name (0)                       	zip_code (1)                                                   	telephone number (2)	social security number (3)
+1       	John Ali                       	30127 Powder Springs (Cobb county)                             	4813 850 860     	652-21-2925            
+2       	John Andrade                   	11219 Brooklyn (Kings county)                                  	3740 613 964     	291-73-5993            
+3       	John Baker                     	11706 Bay Shore (Suffolk county)                               	2531 018 807     	303-49-9976            
+4       	John Barry                     	33024 Hollywood (Broward county)                               	7984 721 521     	999-69-8360            
+5       	John Bernard                   	78228 San Antonio (Bexar county)                               	3016 104 630     	499-82-1728            
+6       	John Bonilla                   	30044 Lawrenceville (Gwinnett county)                          	5018 138 794     	573-10-8928            
+7       	John Brown                     	85326 Buckeye (Maricopa county)                                	8294 846 195     	109-80-9040            
+8       	John Brown                     	91911 Chula Vista (San Diego county)                           	6812 053 630     	071-67-1895            
+9       	John Brown                     	92553 Moreno Valley (Riverside county)                         	6726 786 952     	124-97-8386            
+10      	John Burns                     	23462 Virginia Beach (Virginia Beach City county)              	4393 119 000     	602-89-2397            
+11      	John Campbell                  	28027 Concord (Cabarrus county)                                	2404 408 339     	031-10-0425            
+12      	John Carrillo                  	94544 Hayward (Alameda county)                                 	2383 223 514     	382-41-8498            
+13      	John Chase                     	29681 Simpsonville (Greenville county)                         	2196 836 103     	511-14-4034            
+14      	John Christensen               	95035 Milpitas (Santa Clara county)                            	9302 130 351     	872-13-3529            
+15      	John Chung                     	87114 Albuquerque (Bernalillo county)                          	4448 794 655     	654-43-6651            
+16      	John Collins                   	91766 Pomona (Los Angeles county)                              	3506 971 334     	173-31-1732            
+17      	John Drake                     	91766 Pomona (Los Angeles county)                              	2016 647 865     	196-58-8472            
+18      	John Dunn                      	92683 Westminster (Orange county)                              	1339 924 693     	555-94-1420            
+19      	John Ellis                     	11210 Brooklyn (Kings county)                                  	9168 053 700     	676-02-2086            
+20      	John Flores                    	34953 Port St. Lucie (St. Lucie county)                        	6007 042 544     	087-39-2004            
+21      	John Gallagher                 	75228 Dallas (Dallas county)                                   	9230 461 608     	434-05-5694            
+22      	John Garcia                    	19120 Philadelphia (Philadelphia county)                       	7410 552 174     	429-53-8437            
+23      	John Gonzalez                  	30058 Lithonia (Dekalb county)                                 	7824 994 194     	342-69-3292            
+24      	John Gray                      	32828 Orlando (Orange county)                                  	3412 116 985     	251-04-8408            
+25      	John Harris                    	30047 Lilburn (Gwinnett county)                                	2148 234 639     	306-86-5447            
+26      	John Hernandez                 	21234 Parkville (Baltimore county)                             	1877 210 542     	403-42-5631            
+27      	John Hunt                      	19111 Philadelphia (Philadelphia county)                       	3685 639 301     	304-87-0574            
+28      	John Johnson                   	78660 Pflugerville (Travis county)                             	3564 085 042     	674-24-3500            
+29      	John Lamb                      	37075 Hendersonville (Sumner county)                           	4948 153 596     	518-56-9660            
+30      	John Lu                        	29072 Lexington (Lexington county)                             	7368 891 344     	919-58-0310            
+31      	John Maldonado                 	11234 Brooklyn (Kings county)                                  	1988 248 694     	356-68-7004            
+32      	John Manning                   	95747 Roseville (Placer county)                                	9947 138 574     	575-61-9102            
+33      	John Martinez                  	94122 San Francisco (San Francisco county)                     	2884 826 766     	730-41-1079            
+34      	John Mcdonald                  	95758 Elk Grove (Sacramento county)                            	5217 131 053     	913-46-9147            
+35      	John Medina                    	11201 Brooklyn (Kings county)                                  	4341 648 932     	930-88-7844            
+36      	John Miller                    	2155 Medford (Middlesex county)                                	9166 397 134     	622-07-5450            
+37      	John Miller                    	37042 Clarksville (Montgomery county)                          	1919 027 227     	992-36-0164            
+38      	John Miller                    	78250 San Antonio (Bexar county)                               	1242 377 325     	445-71-9039            
+39      	John Mitchell                  	91402 Panorama City (Los Angeles county)                       	7490 601 542     	381-10-5724            
+40      	John Moran                     	7093 West New York (Hudson county)                             	8007 030 953     	425-24-1078            
+41      	John Ortiz                     	83646 Meridian (Ada county)                                    	9810 113 112     	172-93-3273            
+42      	John Page                      	7002 Bayonne (Hudson county)                                   	2331 315 073     	870-23-4254            
+43      	John Patton                    	90066 Los Angeles (Los Angeles county)                         	8282 342 070     	331-85-9894            
+44      	John Perez                     	75150 Mesquite (Dallas county)                                 	9964 569 416     	311-60-4545            
+45      	John Perkins                   	97007 Beaverton (Washington county)                            	9562 350 791     	295-73-6569            
+46      	John Reyes                     	33463 Lake Worth (Palm Beach county)                           	7327 487 002     	176-63-1542            
+47      	John Rhodes                    	95758 Elk Grove (Sacramento county)                            	5476 949 335     	339-17-8587            
+48      	John Robinson                  	11368 Corona (Queens county)                                   	6190 232 775     	046-62-9524            
+49      	John Rubio                     	33025 Hollywood (Broward county)                               	6085 516 481     	620-56-1923            
+50      	John Santana                   	60085 Waukegan (Lake county)                                   	2238 001 610     	895-28-1459            
+51      	John Scott                     	32244 Jacksonville (Duval county)                              	2441 035 625     	075-95-3346            
+52      	John Stewart                   	33023 Hollywood (Broward county)                               	6128 713 172     	998-42-7758            
+53      	John Taylor                    	91910 Chula Vista (San Diego county)                           	3255 194 708     	741-18-5650            
+54      	John Thomas                    	11235 Brooklyn (Kings county)                                  	4631 774 566     	501-61-4514            
+55      	John Thomas                    	72401 Jonesboro (Craighead county)                             	2617 303 495     	134-60-7150            
+56      	John Todd                      	79936 El Paso (El Paso county)                                 	8999 806 493     	942-64-8144            
+57      	John Torres                    	10469 Bronx (Bronx county)                                     	2252 727 712     	493-60-6838            
+58      	John Ventura                   	77573 League City (Galveston county)                           	3109 927 409     	541-75-9545            
+59      	John Webb                      	44060 Mentor (Lake county)                                     	9979 470 393     	750-13-0007            
+60      	John Wilson                    	78045 Laredo (Webb county)                                     	7209 586 272     	774-90-7751            
+61      	John Wilson                    	92021 El Cajon (San Diego county)                              	6319 470 778     	172-58-6908            
+62      	John Yoder                     	91744 La Puente (Los Angeles county)                           	3702 612 116     	284-85-0422            
+63      	John Young                     	79938 El Paso (El Paso county)                                 	9716 497 328     	713-15-6104            
+Foram listadas 63 / 4096 pessoas
+Foram percorridos 80 / 4096 nós da árvore
+Tempo de execução: 1.346000e-04
+

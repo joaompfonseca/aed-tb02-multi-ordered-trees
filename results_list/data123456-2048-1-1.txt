@@ -1,0 +1,62 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+2048     	0    	3.688000e-04
+2048     	1    	4.434000e-04
+2048     	2    	3.712000e-04
+2048     	3    	3.136000e-04
+
+Procura de nós nas árvores:
+n_persons	index	time        
+2048     	0    	4.005000e-04
+2048     	1    	5.509000e-04
+2048     	2    	4.345000e-04
+2048     	3    	3.763000e-04
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+2048     	0    	2.980000e-05	26   
+2048     	1    	2.890000e-05	22   
+2048     	2    	3.020000e-05	22   
+2048     	3    	3.130000e-05	25   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 	lvl21 	lvl22 	lvl23 	lvl24 	lvl25 	lvl26 
+2048     	0    	2.760000e-05	1     	2     	4     	8     	15    	24    	39    	60    	88    	115   	133   	145   	146   	147   	161   	162   	158   	152   	142   	112   	82    	58    	41    	30    	15    	6     	2     
+2048     	1    	2.640000e-05	1     	2     	4     	8     	15    	30    	52    	81    	110   	147   	185   	211   	219   	230   	219   	182   	146   	106   	61    	21    	12    	4     	2     	nan   	nan   	nan   	nan   
+2048     	2    	2.850000e-05	1     	2     	4     	8     	15    	29    	52    	91    	138   	198   	242   	266   	259   	206   	166   	122   	92    	67    	42    	21    	16    	10    	1     	nan   	nan   	nan   	nan   
+2048     	3    	2.800000e-05	1     	2     	4     	8     	16    	32    	55    	89    	135   	178   	216   	247   	236   	214   	181   	158   	110   	70    	41    	27    	16    	4     	4     	2     	1     	1     	nan   
+
+Lista de pessoas (índice 0, filtro "^John "):
+#       	name (0)                       	zip_code (1)                                                   	telephone number (2)	social security number (3)
+1       	John Ali                       	30127 Powder Springs (Cobb county)                             	4813 850 860     	652-21-2925            
+2       	John Andrade                   	11219 Brooklyn (Kings county)                                  	3740 613 964     	291-73-5993            
+3       	John Bernard                   	78228 San Antonio (Bexar county)                               	3016 104 630     	499-82-1728            
+4       	John Bonilla                   	30044 Lawrenceville (Gwinnett county)                          	5018 138 794     	573-10-8928            
+5       	John Brown                     	85326 Buckeye (Maricopa county)                                	8294 846 195     	109-80-9040            
+6       	John Brown                     	92553 Moreno Valley (Riverside county)                         	6726 786 952     	124-97-8386            
+7       	John Christensen               	95035 Milpitas (Santa Clara county)                            	9302 130 351     	872-13-3529            
+8       	John Collins                   	91766 Pomona (Los Angeles county)                              	3506 971 334     	173-31-1732            
+9       	John Drake                     	91766 Pomona (Los Angeles county)                              	2016 647 865     	196-58-8472            
+10      	John Gallagher                 	75228 Dallas (Dallas county)                                   	9230 461 608     	434-05-5694            
+11      	John Harris                    	30047 Lilburn (Gwinnett county)                                	2148 234 639     	306-86-5447            
+12      	John Johnson                   	78660 Pflugerville (Travis county)                             	3564 085 042     	674-24-3500            
+13      	John Lu                        	29072 Lexington (Lexington county)                             	7368 891 344     	919-58-0310            
+14      	John Mcdonald                  	95758 Elk Grove (Sacramento county)                            	5217 131 053     	913-46-9147            
+15      	John Miller                    	2155 Medford (Middlesex county)                                	9166 397 134     	622-07-5450            
+16      	John Miller                    	78250 San Antonio (Bexar county)                               	1242 377 325     	445-71-9039            
+17      	John Mitchell                  	91402 Panorama City (Los Angeles county)                       	7490 601 542     	381-10-5724            
+18      	John Perez                     	75150 Mesquite (Dallas county)                                 	9964 569 416     	311-60-4545            
+19      	John Perkins                   	97007 Beaverton (Washington county)                            	9562 350 791     	295-73-6569            
+20      	John Reyes                     	33463 Lake Worth (Palm Beach county)                           	7327 487 002     	176-63-1542            
+21      	John Robinson                  	11368 Corona (Queens county)                                   	6190 232 775     	046-62-9524            
+22      	John Rubio                     	33025 Hollywood (Broward county)                               	6085 516 481     	620-56-1923            
+23      	John Scott                     	32244 Jacksonville (Duval county)                              	2441 035 625     	075-95-3346            
+24      	John Taylor                    	91910 Chula Vista (San Diego county)                           	3255 194 708     	741-18-5650            
+25      	John Thomas                    	11235 Brooklyn (Kings county)                                  	4631 774 566     	501-61-4514            
+26      	John Thomas                    	72401 Jonesboro (Craighead county)                             	2617 303 495     	134-60-7150            
+27      	John Ventura                   	77573 League City (Galveston county)                           	3109 927 409     	541-75-9545            
+28      	John Yoder                     	91744 La Puente (Los Angeles county)                           	3702 612 116     	284-85-0422            
+Foram listadas 28 / 2048 pessoas
+Foram percorridos 42 / 2048 nós da árvore
+Tempo de execução: 7.280000e-05
+

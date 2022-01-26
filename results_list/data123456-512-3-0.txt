@@ -1,0 +1,38 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+512      	0    	1.025000e-04
+512      	1    	7.330000e-05
+512      	2    	6.430000e-05
+512      	3    	1.792000e-04
+
+Procura de nós nas árvores:
+n_persons	index	time        
+512      	0    	1.028000e-04
+512      	1    	8.100000e-05
+512      	2    	7.840000e-05
+512      	3    	9.770000e-05
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+512      	0    	7.500000e-06	20   
+512      	1    	6.500000e-06	17   
+512      	2    	6.000000e-06	18   
+512      	3    	6.300000e-06	16   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 
+512      	0    	6.400000e-06	1     	2     	4     	7     	11    	19    	26    	31    	35    	39    	37    	37    	51    	52    	45    	38    	37    	18    	12    	8     	2     
+512      	1    	5.700000e-06	1     	2     	4     	8     	14    	26    	35    	46    	51    	63    	60    	60    	52    	43    	25    	16    	5     	1     	nan   	nan   	nan   
+512      	2    	5.900000e-06	1     	2     	4     	8     	15    	29    	47    	63    	67    	70    	62    	47    	31    	21    	14    	16    	8     	4     	3     	nan   	nan   
+512      	3    	5.900000e-06	1     	2     	4     	8     	14    	26    	39    	45    	61    	74    	69    	60    	46    	31    	20    	9     	3     	nan   	nan   	nan   	nan   
+
+Lista de pessoas (índice 0, filtro "John "):
+#       	name (0)                       	zip_code (1)                                                   	telephone number (2)	social security number (3)
+1       	John Collins                   	91766 Pomona (Los Angeles county)                              	3506 971 334     	173-31-1732            
+2       	John Drake                     	91766 Pomona (Los Angeles county)                              	2016 647 865     	196-58-8472            
+3       	John Johnson                   	78660 Pflugerville (Travis county)                             	3564 085 042     	674-24-3500            
+4       	John Scott                     	32244 Jacksonville (Duval county)                              	2441 035 625     	075-95-3346            
+Foram listadas 4 / 512 pessoas
+Foram percorridos 512 / 512 nós da árvore
+Tempo de execução: 1.007000e-04
+
