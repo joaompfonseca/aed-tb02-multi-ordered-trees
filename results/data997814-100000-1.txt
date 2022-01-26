@@ -1,0 +1,28 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+100000   	0    	5.064040e-02
+100000   	1    	6.077170e-02
+100000   	2    	5.646390e-02
+100000   	3    	5.288780e-02
+
+Procura de nós nas árvores:
+n_persons	index	time        
+100000   	0    	5.449220e-02
+100000   	1    	5.817340e-02
+100000   	2    	5.532000e-02
+100000   	3    	4.886640e-02
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+100000   	0    	4.257900e-03	37   
+100000   	1    	4.339500e-03	35   
+100000   	2    	4.986500e-03	38   
+100000   	3    	4.974900e-03	45   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 	lvl21 	lvl22 	lvl23 	lvl24 	lvl25 	lvl26 	lvl27 	lvl28 	lvl29 	lvl30 	lvl31 	lvl32 	lvl33 	lvl34 	lvl35 	lvl36 	lvl37 	lvl38 	lvl39 	lvl40 	lvl41 	lvl42 	lvl43 	lvl44 	lvl45 
+100000   	0    	4.022700e-03	1     	2     	4     	8     	16    	32    	64    	127   	249   	452   	765   	1275  	2002  	2942  	3949  	5138  	6277  	7419  	8291  	8743  	8867  	8510  	7651  	6702  	5567  	4433  	3471  	2592  	1780  	1124  	690   	408   	244   	129   	54    	16    	4     	2     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	1    	3.891300e-03	1     	2     	4     	8     	16    	32    	63    	123   	237   	441   	790   	1328  	2078  	3106  	4358  	5709  	7155  	8332  	9114  	9477  	9311  	8608  	7460  	6271  	5068  	3706  	2649  	1827  	1196  	731   	430   	217   	93    	38    	16    	5     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	2    	4.462600e-03	1     	2     	4     	8     	16    	31    	61    	121   	225   	406   	712   	1163  	1798  	2608  	3519  	4437  	5350  	6140  	6895  	7467  	7790  	7823  	7572  	7056  	6404  	5539  	4626  	3799  	2922  	2095  	1439  	913   	542   	289   	136   	51    	29    	8     	3     	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	3    	4.774300e-03	1     	2     	4     	8     	16    	32    	64    	126   	236   	421   	736   	1221  	1945  	2932  	4109  	5332  	6479  	7475  	8163  	8488  	8562  	8236  	7632  	6698  	5556  	4514  	3484  	2595  	1823  	1261  	750   	470   	277   	148   	82    	48    	31    	16    	8     	4     	3     	4     	5     	1     	1     	1     
+

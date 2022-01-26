@@ -1,0 +1,28 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+100000   	0    	5.070110e-02
+100000   	1    	6.825420e-02
+100000   	2    	5.790510e-02
+100000   	3    	5.138830e-02
+
+Procura de nós nas árvores:
+n_persons	index	time        
+100000   	0    	5.468730e-02
+100000   	1    	6.321530e-02
+100000   	2    	5.744460e-02
+100000   	3    	5.285690e-02
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+100000   	0    	4.877200e-03	37   
+100000   	1    	4.735200e-03	48   
+100000   	2    	7.159700e-03	38   
+100000   	3    	5.515800e-03	37   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 	lvl21 	lvl22 	lvl23 	lvl24 	lvl25 	lvl26 	lvl27 	lvl28 	lvl29 	lvl30 	lvl31 	lvl32 	lvl33 	lvl34 	lvl35 	lvl36 	lvl37 	lvl38 	lvl39 	lvl40 	lvl41 	lvl42 	lvl43 	lvl44 	lvl45 	lvl46 	lvl47 	lvl48 
+100000   	0    	6.103700e-03	1     	2     	4     	8     	16    	32    	63    	123   	239   	443   	789   	1324  	2142  	3195  	4397  	5754  	7083  	8150  	8940  	9311  	9180  	8564  	7649  	6302  	5087  	3776  	2773  	1907  	1225  	734   	412   	212   	84    	37    	22    	13    	6     	1     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	1    	5.401700e-03	1     	2     	4     	8     	16    	32    	63    	119   	218   	400   	700   	1166  	1852  	2778  	3797  	5025  	6265  	7297  	8017  	8566  	8556  	8221  	7481  	6476  	5500  	4442  	3493  	2660  	2005  	1449  	1000  	706   	456   	300   	189   	145   	98    	85    	81    	75    	65    	62    	57    	39    	20    	6     	4     	2     	1     
+100000   	2    	4.799600e-03	1     	2     	4     	8     	16    	31    	62    	121   	234   	439   	779   	1314  	2065  	3032  	4226  	5552  	6863  	8009  	8792  	9191  	8922  	8399  	7490  	6314  	5068  	3971  	3034  	2148  	1503  	982   	641   	405   	211   	101   	38    	14    	10    	5     	3     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	3    	4.959500e-03	1     	2     	4     	8     	16    	32    	63    	123   	221   	381   	661   	1074  	1617  	2350  	3305  	4341  	5527  	6592  	7571  	8391  	8990  	9041  	8613  	7606  	6490  	5239  	4011  	2871  	1929  	1232  	779   	441   	236   	127   	68    	32    	11    	4     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+

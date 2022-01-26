@@ -1,0 +1,28 @@
+Criação das árvores ordenadas:
+n_persons	index	time        
+100000   	0    	5.175390e-02
+100000   	1    	6.978810e-02
+100000   	2    	7.122520e-02
+100000   	3    	5.737970e-02
+
+Procura de nós nas árvores:
+n_persons	index	time        
+100000   	0    	5.758940e-02
+100000   	1    	6.361530e-02
+100000   	2    	6.645960e-02
+100000   	3    	5.928560e-02
+
+Maior profundidade das árvores:
+n_persons	index	time        	depth
+100000   	0    	5.821800e-03	38   
+100000   	1    	6.258300e-03	36   
+100000   	2    	7.443800e-03	45   
+100000   	3    	6.438600e-03	34   
+
+Número de nós em cada nível:
+n_persons	index	time        	lvl0  	lvl1  	lvl2  	lvl3  	lvl4  	lvl5  	lvl6  	lvl7  	lvl8  	lvl9  	lvl10 	lvl11 	lvl12 	lvl13 	lvl14 	lvl15 	lvl16 	lvl17 	lvl18 	lvl19 	lvl20 	lvl21 	lvl22 	lvl23 	lvl24 	lvl25 	lvl26 	lvl27 	lvl28 	lvl29 	lvl30 	lvl31 	lvl32 	lvl33 	lvl34 	lvl35 	lvl36 	lvl37 	lvl38 	lvl39 	lvl40 	lvl41 	lvl42 	lvl43 	lvl44 	lvl45 
+100000   	0    	5.514300e-03	1     	2     	4     	8     	16    	32    	61    	117   	215   	389   	672   	1106  	1734  	2624  	3778  	5091  	6536  	7860  	8919  	9430  	9401  	8738  	7792  	6716  	5472  	4270  	3214  	2262  	1481  	889   	533   	294   	175   	88    	48    	21    	7     	3     	1     	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	1    	7.414000e-03	1     	2     	4     	8     	16    	32    	64    	123   	227   	393   	679   	1107  	1724  	2595  	3585  	4777  	5894  	7022  	8088  	8747  	8957  	8767  	8116  	7282  	6132  	4982  	3775  	2661  	1797  	1103  	652   	350   	192   	94    	39    	11    	2     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+100000   	2    	1.484730e-02	1     	2     	4     	8     	16    	32    	64    	126   	244   	457   	769   	1231  	1883  	2703  	3696  	4826  	5954  	6973  	7800  	8341  	8598  	8618  	8099  	7210  	6099  	4850  	3591  	2582  	1777  	1237  	801   	525   	327   	213   	120   	77    	43    	29    	21    	15    	14    	9     	4     	4     	4     	3     
+100000   	3    	5.375100e-03	1     	2     	4     	8     	16    	32    	62    	123   	228   	423   	769   	1281  	2041  	3055  	4379  	5897  	7427  	8792  	9843  	10348 	9941  	9047  	7745  	6123  	4531  	3151  	2008  	1222  	716   	375   	200   	130   	56    	19    	5     	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   	nan   
+
