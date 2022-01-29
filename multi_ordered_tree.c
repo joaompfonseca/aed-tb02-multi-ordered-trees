@@ -24,8 +24,9 @@
  */
 #define USAGE "Sintaxe: %s n_mec n_persons [options ...]\n"                        \
               "Opções válidas:\n"                                               \
-              "    -f [regex], --filter [regex]    # filtra o conteúdo listado\n" \
-              "    -l [N?], --list [N?]            # lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
+              "    -f [regex], --filter [regex]    # Filtra o conteúdo listado. Se o primeiro caractere for '^', efetua uma filtragem inteligente\n"\
+              "                                    # ignorando caminhos por onde não seriam encontradas possíveis correspondências\n" \
+              "    -l [N?], --list [N?]            # Lista o conteúdo da árvore, ordenado pelos dados correspondentes ao índice N (por defeito, N=0)\n"
 
 /**
  * @brief Flags da expressão regular (do filtro)
@@ -40,14 +41,6 @@
                "    n_persons ... %d\n"        \
                "    filter ...... \"%s\"\n"    \
                "    list_index .. %d\n"
-
-/**
- * @brief Opções disponíveis no programa.
- */
-static struct option long_options[] = {
-    {"filter", required_argument, NULL, 'f'},
-    {"list", required_argument, NULL, 'l'},
-    {NULL, 0, NULL, 0}};
 
 /* ------------------------------------ Estruturas de Dados ------------------------------------- */
 
@@ -68,7 +61,7 @@ typedef struct tree_node_s
 } tree_node_t;
 
 /**
- * @brief Informações sobre a listagem
+ * @brief Informações da listagem
  */
 typedef struct list_s
 {
@@ -77,7 +70,7 @@ typedef struct list_s
 } list_t;
 
 /**
- * @brief Informações sobre o filtro
+ * @brief Informações do filtro
  */
 typedef struct filter_s
 {
@@ -135,7 +128,7 @@ int compare_tree_nodes(tree_node_t *node1, tree_node_t *node2, int main_index)
 }
 
 /**
- * @brief Compara o dado no índice da árvore a uma string.
+ * @brief Compara o conteúdo no índice da árvore a uma string.
  *
  * @param node       Ponteiro para o nó
  * @param main_index Índice da árvore
@@ -169,7 +162,7 @@ int compare_tree_data(tree_node_t *node, int main_index, char *str)
  *
  * @param node       Ponteiro para o nó
  * @param main_index Índice da árvore
- * @param filter     Ponteiro para as informações sobre o filtro
+ * @param filter     Ponteiro para as informações do filtro
  * @return           Resultado da filtragem
  */
 int filter_tree_node(tree_node_t *node, int main_index, filter_t *filter)
@@ -195,25 +188,25 @@ int filter_tree_node(tree_node_t *node, int main_index, filter_t *filter)
 }
 
 /**
- * @brief Imprime os dados do nó.
+ * @brief Imprime os dados do nó e incrementa o número de nós listados.
  *
  * @param node  Ponteiro para o nó
- * @param count Ponteiro para o número de pessoas listadas
+ * @param count Ponteiro para o número de nós listados
  */
 void visit(tree_node_t *node, int *count)
 {
     printf("%-8d\t%-31s\t%-63s\t%-17s\t%-23s\n", ++(*count), node->name, node->zip_code, node->telephone_number, node->social_security_number);
 }
 
-/* ------------------------------------------ Funções ------------------------------------------- */
+/* ---------------------------------- Operações implementadas ----------------------------------- */
 
 /**
- * @brief Insere nó na árvore, de uma forma recursiva.
+ * @brief Insere um nó na árvore, de uma forma recursiva.
  *
  * @param link       Ponteiro para o ponteiro que aponta para o nó atual
  * @param main_index Índice da árvore
  * @param node       Ponteiro para o nó a inserir
- * @param n_mec      Número de estudante utilizado (utilizado apenas no caso de haver nós iguais)
+ * @param n_mec      Número de estudante (utilizado apenas no caso de haver nós iguais)
  */
 void tree_insert(tree_node_t **link, int main_index, tree_node_t *node, int n_mec)
 {
@@ -231,7 +224,7 @@ void tree_insert(tree_node_t **link, int main_index, tree_node_t *node, int n_me
 }
 
 /**
- * @brief Procura nó na árvore, de uma forma recursiva.
+ * @brief Procura um nó na árvore, de uma forma recursiva.
  *
  * @param link       Ponteiro para o nó atual
  * @param main_index Índice da árvore
@@ -263,7 +256,7 @@ int tree_depth(tree_node_t *link, int main_index)
     int left_depth = tree_depth(link->left[main_index], main_index);   // ramo esquerdo
     int right_depth = tree_depth(link->right[main_index], main_index); // ramo direito
 
-    return (left_depth > right_depth) ? left_depth + 1 : right_depth + 1;
+    return ((left_depth > right_depth) ? left_depth : right_depth) + 1;
 }
 
 /**
@@ -285,12 +278,12 @@ void count_nodes_in_levels(tree_node_t *link, int main_index, int *counts, int l
 }
 
 /**
- * @brief Lista dados dos nós da árvore que passam no filtro especificado, de uma forma recursiva.
+ * @brief Lista os nós da árvore que passam no filtro especificado, de uma forma recursiva.
  *
  * @param link       Ponteiro para o nó atual
  * @param main_index Índice da árvore
- * @param count      Ponteiro para as contagens do número de pessoas listadas e número de nós percorridos
- * @param filter     Ponteiro para as informações sobre o filtro
+ * @param count      Ponteiro para as contagens do número de nós listados e número de nós percorridos
+ * @param filter     Ponteiro para as informações do filtro
  */
 void list_nodes(tree_node_t *link, int main_index, pn_count_t *count, filter_t *filter)
 {
@@ -310,6 +303,14 @@ void list_nodes(tree_node_t *link, int main_index, pn_count_t *count, filter_t *
 }
 
 /* -------------------------------- Fluxo de Execução Principal --------------------------------- */
+
+/**
+ * @brief Opções disponíveis no programa.
+ */
+static struct option long_options[] = {
+    {"filter", required_argument, NULL, 'f'},
+    {"list", required_argument, NULL, 'l'},
+    {NULL, 0, NULL, 0}};
 
 int main(int argc, char **argv)
 {
