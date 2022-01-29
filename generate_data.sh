@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[[ $# -ne 9 ]] && echo "Sintaxe: $0 [nMecMin] [nMecMax] [nPersonsMin] [nPersonsMax] [nExp] [list_flag] [list_index] [clever_filter_flag] [filter]" && exit 1
+[[ $# -ne 9 ]] && echo "Sintaxe: $0 nMecMin nMecMax nPersonsMin nPersonsMax nExp list_flag list_index clever_filter_flag filter" && exit 1
 
 # Para cada número de estudante
 for nmec in $(seq $1 $2)
